@@ -97,6 +97,7 @@ class AdminLogIn(tk.Frame):
 
 
         # self.short_cut() # NOTE: Remove this
+        self.short_cut()
 
     def log_in(self, event=None):
         admin_username = self.admin_username_entry.get().strip()
