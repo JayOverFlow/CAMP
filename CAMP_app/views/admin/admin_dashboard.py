@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from CAMP_app.views.admin.enroll_student import EnrollStudent
+from CAMP_app.views.admin.admit_student import AdmitStudent
 from CAMP_app.views.admin.view_student_profile import ViewStudentProfile
 
 
@@ -87,7 +87,7 @@ class AdminDashboard(tk.Frame):
 
     def enroll_student(self):
         self.admin_landing.attributes("-disabled", True) # Disable the interaction
-        self.admin_landing.wait_window(EnrollStudent(self.main, self.admin_landing)) # Wait for the popup
+        self.admin_landing.wait_window(AdmitStudent(self.main, self.admin_landing)) # Wait for the popup
         self.admin_landing.attributes("-disabled", False) # Re-enable the interaction
         self.admin_landing.focus_force() # Regain focus on the parent window
 
