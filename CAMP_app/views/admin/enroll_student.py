@@ -116,8 +116,8 @@ class EnrollStudent(tk.Toplevel):
         self.confirm_password = tk.Entry(self.main_frame, show="*")
         self.confirm_password.grid(row=8, column=3)
 
-        self.enroll_btn = tk.Button(self.main_frame, text="Enroll Student", command=self.validate_fields)
-        self.enroll_btn.grid(row=4, column=4)
+        self.admit_btn = tk.Button(self.main_frame, text="Admit Student", command=self.validate_fields)
+        self.admit_btn.grid(row=4, column=4)
 
         self.close_btn = tk.Button(self.main_frame, text="Close", command=self.close)
         self.close_btn.grid(row=6, column=4)
