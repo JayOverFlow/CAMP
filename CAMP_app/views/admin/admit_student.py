@@ -3,13 +3,13 @@ from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
 
 
-class EnrollStudent(tk.Toplevel):
+class AdmitStudent(tk.Toplevel):
     def __init__(self, main, parent): # parent is the AdminDashboard
         super().__init__(parent)
         self.main = main
         self.admin_dashboard = parent
 
-        self.title("Enroll Student")
+        self.title("Admit Student")
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
 
@@ -240,6 +240,6 @@ if __name__ == "__main__":
     import sys
     root = tk.Tk()
     root.withdraw()  # Hide the root window
-    test_app = EnrollStudent(None, None)  # Create the Toplevel window
+    test_app = AdmitStudent(None, None)  # Create the Toplevel window
     test_app.mainloop()
     sys.exit()
