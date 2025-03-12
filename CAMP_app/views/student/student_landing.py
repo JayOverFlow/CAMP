@@ -65,20 +65,20 @@ class StudentLanding(tk.Toplevel):
         self.sidebar_canvas.create_text(20, 20, text=self.student_session["stu_full_name"], font=LEXEND_DECA_10, fill="#FFFFFF", anchor=tk.NW)
 
         # Profile Button Tab
-        self.profile_btn = tk.Button(self.sidebar, text="Profile", command= lambda: self.display_frame("StudentProfileTab"))
-        self.profile_btn.place(x=10, y=50)
+        self.profile_btn = tk.Button(self.sidebar, text="Profile", command=lambda: self.display_frame("StudentProfileTab"))
+        self.profile_btn.place(x=2, y=100)
 
         # Course Button Tab
-        self.course_btn = tk.Button(self.sidebar, text="Courses", command= lambda: self.display_frame("StudentCoursesTab"))
-        self.course_btn.place(x=10, y=100)
+        self.course_btn = tk.Button(self.sidebar, text="Courses", command=lambda: self.display_frame("StudentCoursesTab"))
+        self.course_btn.place(x=2, y=200)
 
         # Schedule Button Tab
-        self.sched_btn = tk.Button(self.sidebar, text="Schedule", command= lambda: self.display_frame("StudentScheduleTab"))
-        self.sched_btn.place(x=10, y=150)
+        self.sched_btn = tk.Button(self.sidebar, text="Schedule", command=lambda: self.display_frame("StudentScheduleTab"))
+        self.sched_btn.place(x=2, y=350)
 
         # Logout
         self.logout_btn = tk.Button(self.sidebar, text="Logout", command=self.log_out)
-        self.logout_btn.place(x=10, y=200)
+        self.logout_btn.place(x=2, y=500)
 
         self.display_frame("StudentProfileTab")
 

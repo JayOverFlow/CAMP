@@ -124,7 +124,6 @@ class StudentLogIn(tk.Frame):
                 'stu_emailadd': result["stu_emailadd"],
                 'stu_religion': result["stu_religion"],
                 'stu_address': result["stu_address"],
-                'stu_courses_fk': result["stu_courses_fk"],
             }
 
             self.student_username_entry.delete(0, tk.END)
