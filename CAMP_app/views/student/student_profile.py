@@ -12,9 +12,6 @@ class StudentProfileTab(tk.Frame):
         self.full_name = ttk.Label(self, text=self.student_session["stu_full_name"])
         self.full_name.place(x=5, y=100)
 
-        self.course = ttk.Label(self, text=self.student_session["stu_courses_fk"])
-        self.course.place(x=8, y=150)
-
         self.first_name = ttk.Label(self, text=self.student_session["stu_first_name"])
         self.first_name.place(x=20, y=170)
 
