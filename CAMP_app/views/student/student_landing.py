@@ -76,6 +76,10 @@ class StudentLanding(tk.Toplevel):
         self.sched_btn = tk.Button(self.sidebar, text="Schedule", command=lambda: self.display_frame("StudentScheduleTab"))
         self.sched_btn.place(x=2, y=350)
 
+        # Logout
+        self.logout_btn = tk.Button(self.sidebar, text="Logout", command=self.log_out)
+        self.logout_btn.place(x=2, y=500)
+
         self.display_frame("StudentProfileTab")
 
 
