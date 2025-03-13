@@ -28,12 +28,15 @@ class AdminLanding(tk.Toplevel):
         FONTS_DIR = BASE_DIR / "static/fonts"
         FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
         # Font sizes
+        LEXEND_DECA_6 = font.Font(family="Lexend Deca", size=6)
         LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
         LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
         LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
         LEXEND_DECA_16 = font.Font(family="Lexend Deca", size=16)
         LEXEND_DECA_18 = font.Font(family="Lexend Deca", size=18)
         LEXEND_DECA_20 = font.Font(family="Lexend Deca", size=20)
+
+
         try:
             ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
         except Exception as e:
@@ -63,8 +66,22 @@ class AdminLanding(tk.Toplevel):
         self.sidebar_canvas = tk.Canvas(self.sidebar, bg="#8D0404")
         self.sidebar_canvas.pack(fill=tk.BOTH, expand=True)
 
+        # CAMP Logo
+        camp_logo_path = IMAGES_DIR / "CAMPLogoWhiteTypography.png"
+        camp_logo = Image.open(camp_logo_path)
+        camp_logo = camp_logo.resize((100,35), Image.Resampling.LANCZOS)
+        self.camp_logo = ImageTk.PhotoImage(camp_logo)
+        self.sidebar_canvas.create_image(20, 20, image=self.camp_logo, anchor=tk.NW)
+
+
         # Admin username
-        self.sidebar_canvas.create_text(10, 10, text=self.admin_session["adm_username"], font=LEXEND_DECA_10, fill="#FFFFFF",anchor=tk.NW)
+        icon_admin_path = IMAGES_DIR / "ProfileIcon.png"
+        icon_admin = Image.open(icon_admin_path)
+        icon_admin = icon_admin.resize((50,50), Image.Resampling.LANCZOS)
+        self.icon_admin = ImageTk.PhotoImage(icon_admin)
+        self.sidebar_canvas.create_image(45, 90, image=self.icon_admin, anchor=tk.NW)
+        self.sidebar_canvas.create_text(36, 145, text=self.admin_session["adm_username"], font=LEXEND_DECA_10, fill="#FFFFFF",anchor=tk.NW)
+        self.sidebar_canvas.create_text(55, 167, text="ADMIN", font=LEXEND_DECA_6 , fill="#FFFFFF", anchor=tk.NW )
 
         # Dashboard button tab
         dashboard_path = IMAGES_DIR / "DashboardButtonActive.png"
@@ -72,7 +89,7 @@ class AdminLanding(tk.Toplevel):
         dashboard_img = dashboard_img.resize((136, 72), Image.Resampling.LANCZOS)
         self.dashboard_img = ImageTk.PhotoImage(dashboard_img)
         self.dashboard_btn = tk.Button(self.sidebar, width=134, height=70, borderwidth=0, image=self.dashboard_img, command=lambda: self.display_frame("AdminDashboard"))
-        self.dashboard_btn.place(x=2, y=100)
+        self.dashboard_btn.place(x=2, y=200)
 
         # Faculty button tab
         faculty_path = IMAGES_DIR / "FacultyButton.png"
@@ -80,7 +97,7 @@ class AdminLanding(tk.Toplevel):
         faculty_img = faculty_img.resize((136, 72), Image.Resampling.LANCZOS)
         self.faculty_img = ImageTk.PhotoImage(faculty_img)
         self.faculty_btn = tk.Button(self.sidebar, width=134, height=70, borderwidth=0, image=self.faculty_img, command=lambda: self.display_frame("AdminFaculty"))
-        self.faculty_btn.place(x=2, y=200)
+        self.faculty_btn.place(x=2, y=270)
 
         # Courses button tab
         courses_path = IMAGES_DIR / "CoursesButton.png"
@@ -88,16 +105,16 @@ class AdminLanding(tk.Toplevel):
         courses_img = courses_img.resize((136, 72), Image.Resampling.LANCZOS)
         self.courses_img = ImageTk.PhotoImage(courses_img)
         self.courses_btn = tk.Button(self.sidebar, width=134, height=70, borderwidth=0, image=self.courses_img, command=lambda: self.display_frame("AdminCourses"))
-        self.courses_btn.place(x=2, y=300)
+        self.courses_btn.place(x=2, y=340)
 
         # Logout button
         logout_path = IMAGES_DIR / "LogOutButton.png"
         logout_img = Image.open(logout_path)
-        logout_img = logout_img.resize((136, 26), Image.Resampling.LANCZOS)
+        logout_img = logout_img.resize((138, 23), Image.Resampling.LANCZOS)
         self.logout_img = ImageTk.PhotoImage(logout_img)
-        self.logout_btn = tk.Button(self.sidebar, width=134, height=24
+        self.logout_btn = tk.Button(self.sidebar, width=134, height=21
                                     , borderwidth=0, image=self.logout_img, command=self.log_out)
-        self.logout_btn.place(x=2, y=500)
+        self.logout_btn.place(x=2, y=550)
 
         # Logout button
         self.logout_btn = tk.Button(self.sidebar, text="Logout", command=self.log_out)
@@ -127,3 +144,4 @@ class AdminLanding(tk.Toplevel):
             self.main.clear_user_session("Admin") # Clear the admin session
             self.destroy() # Close the dashboard
             self.main.deiconify() # Display the home screen
+
