@@ -250,16 +250,38 @@ class AdminModel:
         finally:
             conn.close()
 
+
     def get_faculties(self):
         conn = self.db.get_connection()
 
+        # Connection failed
         if not conn:
             return None
 
         try:
             cursor = conn.cursor(dictionary=True)
-            query = "SELECT fac_full_name, fac_id FROM faculty_tbl"
+            query = "SELECT f.fac_id, f.fac_full_name, c.cou_name AS course_name FROM faculty_tbl AS f LEFT JOIN course_tbl AS c ON f.fac_id = c.fac_id_fk"
             cursor.execute(query)
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
+
+    def get_faculty_students(self, fac_id):
+        conn = self.db.get_connection()
+
+        # Connection failed
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = "SELECT DISTINCT s.stu_id, s.stu_full_name FROM apply_tbl a JOIN student_tbl s ON a.stu_id_fk = s.stu_id JOIN course_tbl c ON a.cou_id_fk = c.cou_id JOIN faculty_tbl f ON c.fac_id_fk = f.fac_id WHERE f.fac_id = %s"
+            cursor.execute(query, (fac_id,))
             result = cursor.fetchall()
             cursor.close()
             return result
