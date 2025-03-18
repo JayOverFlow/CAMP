@@ -105,7 +105,6 @@ class StudentLogIn(tk.Frame):
 
         # Authenticate
         result = self.main.user_auth.authenticate_student(student_username, student_password)
-        print(result)
 
         if result:
             student_data = {
