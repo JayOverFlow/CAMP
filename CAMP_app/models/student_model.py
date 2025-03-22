@@ -69,26 +69,51 @@ class StudentModel:
         except mysql.connector.Error as err:
             print("Error updating student information:", err)
 
-    def insert_applied_courses(self, stu_id):
+    def fetch_courses(self):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
         try:
-            conn = self.db.get_connection()
-            cursor= conn.cursor()
-
-            for course, professor in self.selected_courses:
-                query = "INSERT INTO apply_tbl (course_name, assigned_professor) VALUES (%s, %s)"
-                cursor.execute(query, (course, professor))
-
-            conn.commit()
+            cursor = conn.cursor(dictionary=True)
+            query = """SELECT c.cou_name, f.fac_full_name 
+                        FROM course_tbl c 
+                        JOIN faculty_tbl f ON c.fac_id_fk = f.fac_id
+                    """
+            cursor.execute(query)
+            result = cursor.fetchall()
             cursor.close()
+            return result
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
             conn.close()
 
-            print("Selected Courses:", self.selected_courses)
+    def get_sched(self, stu_id):
+            conn = self.db.get_connection()
 
-        except mysql.connector.Error as err:
-            print("Error:", err)
+            if not conn:
+                return None
+
+            try:
+                cursor = conn.cursor(dictionary=True)
+                query = """SELECT * 
+                    FROM db_camp.student_schedule
+                    WHERE student_id = %s;
+                    """
+                cursor.execute(query, (stu_id,))
+                result = cursor.fetchall()
+                cursor.close()
+                return result
+            except mysql.connector.Error as error:
+                print(error)
+                return None
+            finally:
+                conn.close()
 
 
-        self.destroy()
 
 
 
