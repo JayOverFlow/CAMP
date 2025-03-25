@@ -50,7 +50,7 @@ class AdminFaculty(tk.Frame):
         self.faculty_list.column("course", anchor="center", width=100)
         self.faculty_list.column("view_student", anchor="center", width=100)
         self.faculty_list.place(x=50, y=100)
-        self.faculty_list.bind("<ButtonRelease-1>", self.view_students)
+        self.faculty_list.bind("<ButtonRelease-1>", self.view_student)
 
         self.display_faculties()
 
@@ -59,21 +59,26 @@ class AdminFaculty(tk.Frame):
         for faculty in faculties:
             self.faculty_list.insert("", "end", values=(faculty["fac_full_name"], faculty["fac_id"], faculty["course_name"], "View Students"))
 
-    def view_students(self, event):
+    def view_student(self, event):
         selected_row = self.faculty_list.identify_row(event.y)
         column_id = self.faculty_list.identify_column(event.x)
 
-        VIEW_STUDENTS_COLUMN_INDEX = 4
+        VIEW_STUDENT_COLUMN_INDEX = 4
 
-        if int(column_id[1:]) == VIEW_STUDENTS_COLUMN_INDEX:
+        if int(column_id[1:]) == VIEW_STUDENT_COLUMN_INDEX:
             values = self.faculty_list.item(selected_row, "values")
 
             if values:
                 fac_id = values[1]
+                cou_id = self.main.admin_model.get_course_id_by_faculty(fac_id)
+                if not cou_id:
+                    print("No course found for this faculty.")
+                    return
+
                 fac_students = self.main.admin_model.get_faculty_students(fac_id)
 
                 self.admin_landing.attributes("-disabled", True)  # Disable the interaction
                 self.admin_landing.wait_window(
-                    ViewFacultyStudents(self, self.admin_landing, self.main, fac_students))  # Wait for the popup
+                    ViewFacultyStudents(self, self.admin_landing, self.main, fac_students, cou_id))  # Wait for the popup
                 self.admin_landing.attributes("-disabled", False)  # Re-enable the interaction
                 self.admin_landing.focus_force()  # Regain focus on the parent window
