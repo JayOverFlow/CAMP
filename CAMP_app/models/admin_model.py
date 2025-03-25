@@ -290,3 +290,46 @@ class AdminModel:
             return None
         finally:
             conn.close()
+
+    def get_course_id_by_faculty(self, fac_id):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = "SELECT cou_id FROM course_tbl WHERE fac_id_fk = %s"
+            cursor.execute(query, (fac_id,))
+            result = cursor.fetchone()
+            cursor.close()
+            return result["cou_id"] if result else None
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
+
+    def remove_faculty_student(self, cou_id, stu_id):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            query = "DELETE FROM apply_tbl WHERE cou_id_fk = %s AND stu_id_fk = %s"
+            cursor.execute(query, (cou_id, stu_id))
+            if cursor.rowcount > 0:
+                conn.commit()
+                cursor.close()
+                print("Student Expelled")
+                return True
+            else:
+                print("Student was not expelled")
+                conn.rollback()
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
