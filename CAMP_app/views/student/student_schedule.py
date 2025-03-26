@@ -38,6 +38,7 @@ class StudentScheduleTab(tk.Frame):
 
         style = ttk.Style(self)
         style.configure("Custom.TLabel", font=("Arial", 20, "bold"), foreground="#8D0404")
+
         # Recreate header
         self.lbl = ttk.Label(self, text="Schedule", style="Custom.TLabel")
         self.lbl.grid(row=0, column=0, columnspan=3, pady=10)
@@ -45,6 +46,35 @@ class StudentScheduleTab(tk.Frame):
         # Fetch schedule
         student_sched = self.main.student_model.get_sched(stu_id)
 
+        # Map days of the week to numeric values for sorting
+        day_order = {
+            "MONDAY": 1,
+            "TUESDAY": 2,
+            "WEDNESDAY": 3,
+            "THURSDAY": 4,
+            "FRIDAY": 5,
+            "SATURDAY": 6,
+            "SUNDAY": 7,
+        }
+
+        # Sort the schedule by the day of the week
+        student_sched.sort(key=lambda x: day_order[x["day_of_week"].upper()])
+
+        # Populate the grid with the sorted schedule
+        for row, sched in enumerate(student_sched, start=2):
+            # Day column
+            tk.Label(self, text=sched["day_of_week"].upper(), fg='white', bg="#8B0000", font=("Arial", 18, "bold")) \
+                .grid(row=row, column=0, sticky="nsew", pady=5)
+
+            # Subject column
+            tk.Label(self, text=sched["course_name"], bg="#E5E5E5", font=("Arial", 14), anchor="w") \
+                .grid(row=row, column=1, sticky="nsew", pady=5)
+
+            # Time column
+            time_start = self.format_time(sched["time_start"])
+            time_end = self.format_time(sched["time_end"])
+            tk.Label(self, text=f"{time_start} - {time_end}", bg="#E5E5E5", font=("Arial", 14), anchor="e") \
+                .grid(row=row, column=2, sticky="nsew", pady=5)
 
         # Populate the grid with the schedule
         for row, sched in enumerate(student_sched, start=2):
