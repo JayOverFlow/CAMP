@@ -333,3 +333,34 @@ class AdminModel:
             return None
         finally:
             conn.close()
+
+    def add_faculty(self, username, password, first_name, middle_name, last_name, email, phone_number):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            query = """
+                INSERT INTO faculty_tbl (fac_username, fac_password, fac_first_name, fac_middle_name, fac_last_name, fac_email, fac_phone_number)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query, (username, password, first_name, middle_name, last_name, email, phone_number))
+
+            if cursor.rowcount > 0:
+                conn.commit()
+                cursor.close()
+                print("Faculty Added Successfully")
+                return True
+            else:
+                print("Failed to Add Faculty")
+                conn.rollback()
+
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+
+        finally:
+            conn.close()
+

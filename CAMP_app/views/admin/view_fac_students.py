@@ -3,10 +3,9 @@ from tkinter import ttk, messagebox
 
 
 class ViewFacultyStudents(tk.Toplevel):
-    def __init__(self, admin_dashboard, parent, main, fac_students, cou_id): # parent is the AdminDashboard
+    def __init__(self, parent, main, fac_students, cou_id): # parent is the AdminDashboard
         super().__init__(parent)
         self.main = main
-        self.admin_dashboard = admin_dashboard
         self.fac_students = fac_students
         self.cou_id = cou_id
         self.protocol("WM_DELETE_WINDOW", self.on_close)

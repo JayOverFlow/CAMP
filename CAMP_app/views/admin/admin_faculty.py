@@ -3,6 +3,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import font, ttk
 
+from CAMP_app.views.admin.add_faculty import AddFaculty
 from CAMP_app.views.admin.view_fac_students import ViewFacultyStudents
 
 
@@ -52,6 +53,10 @@ class AdminFaculty(tk.Frame):
         self.faculty_list.place(x=50, y=100)
         self.faculty_list.bind("<ButtonRelease-1>", self.view_student)
 
+        # Add Faculty Button
+        self.add_fac_btn = ttk.Button(self, text="Add Faculty", command=self.add_faculty)
+        self.add_fac_btn.place(x=50, y=500)
+
         self.display_faculties()
 
     def display_faculties(self):
@@ -79,6 +84,12 @@ class AdminFaculty(tk.Frame):
 
                 self.admin_landing.attributes("-disabled", True)  # Disable the interaction
                 self.admin_landing.wait_window(
-                    ViewFacultyStudents(self, self.admin_landing, self.main, fac_students, cou_id))  # Wait for the popup
+                    ViewFacultyStudents(self.admin_landing, self.main, fac_students, cou_id))  # Wait for the popup
                 self.admin_landing.attributes("-disabled", False)  # Re-enable the interaction
                 self.admin_landing.focus_force()  # Regain focus on the parent window
+
+    def add_faculty(self):
+        self.admin_landing.attributes("-disabled", True)
+        self.admin_landing.wait_window(AddFaculty(self.admin_landing, self.main))
+        self.admin_landing.attributes("-disabled", False)
+        self.admin_landing.focus_force()
