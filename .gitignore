@@ -5,3 +5,9 @@ __pycache__/
 # Ignore IDE and system files
 .idea/
 *.iml
+
+# Ignore all .pyc files
+**/*.pyc
+
+# Ignore all __pycache__ folders
+**/__pycache__/
