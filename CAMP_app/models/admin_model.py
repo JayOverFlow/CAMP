@@ -364,3 +364,241 @@ class AdminModel:
         finally:
             conn.close()
 
+    def get_courses(self):
+        conn = self.db.get_connection()
+
+        # Connection failed
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = """
+            SELECT
+                course_name,    
+                day_of_week, 
+                time_start, 
+                time_end,
+                concat(fac_first_name, ' ', IFNULL(fac_middle_name, ''), ' ', fac_last_name) AS faculty_name
+            FROM
+                course_schedule_faculty
+            WHERE
+                course_name IS NOT NULL
+                """
+            cursor.execute(query)
+            course = cursor.fetchall()
+            cursor.close()
+            return course
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
+
+    def get_course_id_by_name(self, course_name):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = "SELECT cou_id FROM course_tbl WHERE cou_name = %s"
+            cursor.execute(query, (course_name,))
+            result = cursor.fetchone()
+            cursor.close()
+
+            if result:
+                return result['cou_id']
+            else:
+                return None
+        except mysql.connector.Error as error:
+            print(f"Error fetching course ID: {error}")
+            return None
+        finally:
+            conn.close()
+
+    def remove_course(self, cou_id):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            query = "DELETE FROM course_tbl WHERE cou_id = %s"
+            cursor.execute(query, (cou_id,))
+
+            if cursor.rowcount > 0:
+                conn.commit()
+                print("Course removed successfully.")
+                return True
+            else:
+                print("No course found with the given ID.")
+                conn.rollback()
+                return False
+
+        except mysql.connector.Error as error:
+            print(f"Error removing course: {error}")
+            return None
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_schedule_days(self):
+        conn = self.db.get_connection()
+        if not conn:
+            return []
+
+        try:
+            cursor = conn.cursor()
+            query = "SELECT DISTINCT day_of_week FROM schedule_tbl"
+            cursor.execute(query)
+            days = [row[0] for row in cursor.fetchall()]
+            return days
+        except mysql.connector.Error as error:
+            print(f"Error fetching schedule days: {error}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_unassigned_faculties(self):
+        conn = self.db.get_connection()
+        if not conn:
+            return []
+
+        try:
+            cursor = conn.cursor()
+            query = """
+            SELECT f.fac_full_name 
+            FROM faculty_tbl f
+            LEFT JOIN course_tbl c ON f.fac_id = c.fac_id_fk
+            WHERE c.fac_id_fk IS NULL
+            """
+            cursor.execute(query)
+            faculty_names = [row[0] for row in cursor.fetchall()]
+            return faculty_names
+        except mysql.connector.Error as error:
+            print(f"Error fetching faculty names: {error}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_schedule_times(self):
+        conn = self.db.get_connection()
+        if not conn:
+            return []
+
+        try:
+            cursor = conn.cursor()
+            query = "SELECT CONCAT(time_start, ' - ', time_end) AS time_range FROM schedule_tbl"
+            cursor.execute(query)
+            schedule_times = [row[0] for row in cursor.fetchall()]
+            return schedule_times
+        except mysql.connector.Error as error:
+            print(f"Error fetching schedule times: {error}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    def is_schedule_taken(self, day, time_start, time_end):
+        conn = self.db.get_connection()
+        if not conn:
+            return False
+
+        try:
+            cursor = conn.cursor()
+            query = """
+                SELECT c.cou_name, s.day_of_week, s.time_start, s.time_end
+                FROM schedule_tbl as s
+                INNER JOIN course_tbl as c ON s.sch_id = c.sch_id_fk
+                WHERE s.day_of_week = %s AND s.time_start = %s AND s.time_end = %s
+            """
+            cursor.execute(query, (day, time_start, time_end))
+            status = cursor.fetchone()
+            return status
+        except mysql.connector.Error as error:
+            print(f"Error checking schedule: {error}")
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_faculty_id_by_name(self, faculty_name):
+        conn = self.db.get_connection()
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT fac_id FROM faculty_tbl WHERE fac_full_name = %s", (faculty_name,))
+            result = cursor.fetchone()
+            return result[0] if result else None
+        except mysql.connector.Error as error:
+            print(f"Error fetching faculty ID: {error}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_schedule_id(self, day, time_start, time_end):
+        conn = self.db.get_connection()
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            query = """
+                SELECT sch_id FROM schedule_tbl 
+                WHERE day_of_week = %s AND time_start = %s AND time_end = %s
+            """
+            cursor.execute(query, (day, time_start, time_end))
+            result = cursor.fetchone()
+            return result[0] if result else None
+        except mysql.connector.Error as error:
+            print(f"Error fetching schedule ID: {error}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def add_course(self, course_name, faculty_id, schedule_id):
+        conn = self.db.get_connection()
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+
+            # Check if course name already exists
+            cursor.execute("SELECT COUNT(*) FROM course_tbl WHERE cou_name = %s", (course_name,))
+            if cursor.fetchone()[0] > 0:
+                print("Course name already exists.")
+                return False
+
+            # Insert course into course_tbl
+            query = """
+                INSERT INTO course_tbl (cou_name, fac_id_fk, sch_id_fk)
+                VALUES (%s, %s, %s)
+            """
+            cursor.execute(query, (course_name, faculty_id, schedule_id))
+
+            if cursor.rowcount > 0:
+                conn.commit()
+                cursor.close()
+                print("Course Added Successfully")
+                return True
+            else:
+                print("Failed to Add Course")
+                conn.rollback()
+
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+
+        finally:
+            conn.close()
