@@ -38,8 +38,14 @@ class AdminFaculty(tk.Frame):
         # Faculty Label
         self.faculty_canvas.create_text(100, 50, text="Faculty", font=LEXEND_DECA_20, fill="#8D0404")
 
+        # Faculty List Frame
+        self.fac_list_frame = tk.Frame(self, width=700, height=350, bg="#FBFBF9")
+        self.fac_list_frame.place(x=50, y=100)
+        self.fac_list_frame.pack_propagate(False)
+        self.fac_list_frame.grid_propagate(False)
+
         # Faculty List
-        self.faculty_list = ttk.Treeview(self, columns=("fac_full_name", "fac_id", "course", "view_student"), show="headings")
+        self.faculty_list = ttk.Treeview(self.fac_list_frame, columns=("fac_full_name", "fac_id", "course", "view_student"), show="headings")
         # Headings
         self.faculty_list.heading("fac_full_name", text="Name")
         self.faculty_list.heading("fac_id", text="ID")
@@ -50,7 +56,7 @@ class AdminFaculty(tk.Frame):
         self.faculty_list.column("fac_id", anchor="center", width=100)
         self.faculty_list.column("course", anchor="center", width=100)
         self.faculty_list.column("view_student", anchor="center", width=100)
-        self.faculty_list.place(x=50, y=100)
+        self.faculty_list.pack(fill=tk.BOTH, expand=True)
         self.faculty_list.bind("<ButtonRelease-1>", self.view_student)
 
         # Add Faculty Button

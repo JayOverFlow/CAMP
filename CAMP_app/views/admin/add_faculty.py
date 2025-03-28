@@ -4,8 +4,7 @@ import re
 
 
 class AddFaculty(tk.Toplevel):
-    # def __init__(self, parent, main):
-    def __init__(self, parent, main=None):
+    def __init__(self, parent, main):
         super().__init__(parent)
         self.main = main
         self.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -156,13 +155,3 @@ class AddFaculty(tk.Toplevel):
 
     def on_close(self):
         self.destroy()
-
-# # Main function to run the application
-# def main():
-#     root = tk.Tk()
-#     root.withdraw()  # Hide the main window
-#     app = AddFaculty(root)
-#     app.mainloop()
-#
-# if __name__ == "__main__":
-#     main()
