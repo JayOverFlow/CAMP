@@ -4,19 +4,6 @@ class AdminModel:
     def __init__(self, database):
         self.db = database
 
-    # Functionalities needed
-    # 1. Read admin username
-    # 2. Read all student count
-    # 3. Read male student count
-    # 4. Read male student count
-    # 5. Read faculty count
-    # 6. Read all student's full_name & stu_id for student list
-    # 7. Read student's info for View Profile
-    # 8. Search student by ful_name or stu_id
-    # 9. Delete student by viewed profile
-    # 10. Update student by viewed profile
-    # 11. Create student account
-
     def get_student_count(self):
         conn = self.db.get_connection()
 
