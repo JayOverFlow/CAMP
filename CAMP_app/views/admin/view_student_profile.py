@@ -16,8 +16,9 @@ class ViewStudentProfile(tk.Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.title("Student Profile")
-        self.geometry("1000x600+120+20")
+        self.geometry("700x500+285+60")
         self.resizable(False, False)
+        self.configure(bg="#FFFFFF")
 
         # Get the base directory of the project
         BASE_DIR = Path(__file__).resolve().parent.parent.parent  # Moves up two levels from "views"
@@ -29,6 +30,7 @@ class ViewStudentProfile(tk.Toplevel):
         FONTS_DIR = BASE_DIR / "static/fonts"
         FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
         # Font sizes
+        LEXEND_DECA_7 = font.Font(family="Lexend Deca", size=7)
         LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
         LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
         LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
@@ -44,125 +46,150 @@ class ViewStudentProfile(tk.Toplevel):
         PFP_DIR = BASE_DIR / "static/student_pfps"
 
         # Main Frame
-        self.main_frame = tk.Frame(self)
-        self.main_frame.rowconfigure(0, minsize=200)
-        self.main_frame.rowconfigure(1, minsize=400)
-        self.main_frame.columnconfigure(0, minsize=1000)
+        self.main_frame = tk.Frame(self, bg="#FFFFFF")
+        # self.main_frame.rowconfigure(0, minsize=25)
+        # self.main_frame.rowconfigure(1, minsize=25)
+        # self.main_frame.columnconfigure(0, minsize=50)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
+        self.main_frame.pack_propagate(False)
+
+        self.main_frame_canvas = tk.Canvas(self.main_frame, bg="#000000")
+        self.main_frame_canvas.pack(fill=tk.BOTH, expand=True)
+
+
+        self.style = ttk.Style(self.main_frame)
+        # self.style.theme_use("clam")
+        self.style.configure("TEntry", bg="#FFFFFF", fg="#8D0404", font=LEXEND_DECA_10)
+        self.style.configure("TName", fg="#8D0404", font=LEXEND_DECA_16)
+        self.style.configure("Tid", fg="#8D0404", font=LEXEND_DECA_10)
+        self.style.configure("TButton",font=LEXEND_DECA_7, fg="#FFFFFF", bg="#8D0404")
+        self.style.map("TButton", foreground=[("active","#FFFFFF"),("pressed","#FFFFFF")], background=[("active", "#8D0404"), ("pressed","#8D0404")])
 
         # Header Frame
-        self.header_frame = tk.Frame(self.main_frame, width=1000, height=200)
+        self.header_frame = tk.Frame(self.main_frame, width=700, height=150)
         self.header_frame.grid(row=0, column=0, sticky=tk.NSEW)
         self.header_frame.pack_propagate(False)
 
         # Canvas for header_frame
-        self.header_frame_canvas = tk.Canvas(self.header_frame, bg="red")
+        self.header_frame_canvas = tk.Canvas(self.header_frame, bg="#FFFFFF")
         self.header_frame_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Student pfp
-        pfp_path = self.get_pfp_path(PFP_DIR ,self.student_data["stu_id"]) # Get student pfp
+        pfp_path = self.get_pfp_path(PFP_DIR, self.student_data["stu_id"])  # Get student pfp
         self.pfp = self.make_pfp_circle(pfp_path)
-        self.header_frame_canvas.create_image(50, 50, anchor=tk.NW, image=self.pfp)
+        # self.header_frame_canvas.create_image(50, 20, anchor=tk.NW, image=self.pfp)
+        self.pfp_label = tk.Label(self, image=self.pfp, bg="#FFFFFF", borderwidth=0)
+        self.pfp_label.image = self.pfp
+        self.pfp_label.place(x=50, y=20)  # Adjust x, y for centering and floating effect
 
-        # Upload button
-        self.upload_btn = ttk.Button(self.header_frame_canvas, text="Upload", command=lambda: self.upload_pfp(PFP_DIR))
-        self.upload_btn.place(x=70, y=60)
 
         # Full Name
-        self.header_frame_canvas.create_text(500, 20, text=student_data["stu_full_name"])
+        self.header_frame_canvas.create_text(310, 100, text=student_data["stu_full_name"], fill="#8D0404", font=LEXEND_DECA_16)
 
         # ID
-        self.header_frame_canvas.create_text(500, 50, text=f"AU{student_data["stu_id"]}")
+        self.header_frame_canvas.create_text(235, 120, text=f"AU{student_data["stu_id"]}", fill="#8D0404", font=LEXEND_DECA_10)
 
         # Expel Button
         self.expel_btn = ttk.Button(self.header_frame, text="Expel Student", command=self.expel_student)
-        self.header_frame_canvas.create_window(500, 80, window=self.expel_btn)
+        self.header_frame_canvas.create_window(610, 120, window=self.expel_btn)
 
         # Entries Frame
-        self.entries_frame = tk.Frame(self.main_frame, width=1000, height=400)
+        self.entries_frame = tk.Frame(self.main_frame, width=700, height=400, bg="#FFFFFF")
         # Rows
-        self.entries_frame.rowconfigure(0, minsize=54)
-        self.entries_frame.rowconfigure(1, minsize=54)
-        self.entries_frame.rowconfigure(2, minsize=54)
-        self.entries_frame.rowconfigure(3, minsize=54)
-        self.entries_frame.rowconfigure(4, minsize=54)
-        self.entries_frame.rowconfigure(5, minsize=54)
-        self.entries_frame.rowconfigure(6, minsize=54)
+        self.entries_frame.rowconfigure(0, minsize=23)
+        self.entries_frame.rowconfigure(1, minsize=45)
+        self.entries_frame.rowconfigure(2, minsize=45)
+        self.entries_frame.rowconfigure(3, minsize=45)
+        self.entries_frame.rowconfigure(4, minsize=45)
+        self.entries_frame.rowconfigure(5, minsize=45)
+        self.entries_frame.rowconfigure(6, minsize=45)
+        self.entries_frame.rowconfigure(7, minsize=45)
         # Columns
-        self.entries_frame.columnconfigure(0, minsize=240)
-        self.entries_frame.columnconfigure(1, minsize=240)
-        self.entries_frame.columnconfigure(2, minsize=240)
-        self.entries_frame.columnconfigure(3, minsize=240)
+        self.entries_frame.columnconfigure(0, minsize=165)
+        self.entries_frame.columnconfigure(1, minsize=165)
+        self.entries_frame.columnconfigure(2, minsize=165)
+        self.entries_frame.columnconfigure(3, minsize=165)
         self.entries_frame.grid(row=1, column=0, sticky=tk.NSEW)
         self.entries_frame.grid_propagate(False)
 
         # Canvas for entries_frame
-        self.entries_frame_canvas = tk.Canvas(self.entries_frame)
+        self.entries_frame_canvas = tk.Canvas(self.entries_frame, bg="#FFFFFF")
         self.entries_frame_canvas.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Username
-        self.entries_frame_canvas.create_text(50, 20, text="Username: ")
-        self.username = ttk.Entry(self.entries_frame)
-        self.username.grid(row=0, column=1)
+        self.entries_frame_canvas.create_text(80, 43, text="Username: ", font=LEXEND_DECA_10)
+        self.username = ttk.Entry(self.entries_frame, width=25)
+        self.username.grid(row=1, column=1, ipady=4)
 
         # Password
-        self.entries_frame_canvas.create_text(50, 40, text="Password: ")
-        self.password= ttk.Entry(self.entries_frame)
-        self.password.grid(row=1, column=1)
+        self.entries_frame_canvas.create_text(79, 88, text="Password: ", font=LEXEND_DECA_10)
+        self.password= ttk.Entry(self.entries_frame, width=25)
+        self.password.grid(row=2, column=1, ipady=4)
 
         # Birthdate
-        self.entries_frame_canvas.create_text(50, 60, text="Birthdate: ")
-        self.birthdate = ttk.Entry(self.entries_frame)
-        self.birthdate.grid(row=2, column=1)
+        self.entries_frame_canvas.create_text(80, 133, text="Birthdate: ", font=LEXEND_DECA_10)
+        self.birthdate = ttk.Entry(self.entries_frame, width=25)
+        self.birthdate.grid(row=3, column=1, ipady=4)
 
         # Phone
-        self.entries_frame_canvas.create_text(50, 80, text="Phone: ")
-        self.phone = ttk.Entry(self.entries_frame)
-        self.phone.grid(row=3, column=1)
+        self.entries_frame_canvas.create_text(70, 178, text="Phone: ", font=LEXEND_DECA_10)
+        self.phone = ttk.Entry(self.entries_frame, width=25)
+        self.phone.grid(row=4, column=1, ipady=4)
 
-        # Phone
-        self.entries_frame_canvas.create_text(50, 100, text="Email Address: ")
-        self.email = ttk.Entry(self.entries_frame)
-        self.email.grid(row=4, column=1)
+        # Email Address
+        self.entries_frame_canvas.create_text(95, 223, text="Email Address: ", font=LEXEND_DECA_10)
+        self.email = ttk.Entry(self.entries_frame, width=25)
+        self.email.grid(row=5, column=1, ipady=4)
 
         # Address
-        self.entries_frame_canvas.create_text(50, 120, text="Address: ")
-        self.address = ttk.Entry(self.entries_frame)
-        self.address.grid(row=5, column=1)
+        self.entries_frame_canvas.create_text(73, 268, text="Address: ", font=LEXEND_DECA_10)
+        self.address = ttk.Entry(self.entries_frame, width=81)
+        self.address.grid(row=6, column=1, columnspan=3, ipady=4)
 
         # LRN
-        self.entries_frame_canvas.create_text(700, 20, text="LRN: ")
-        self.lrn = ttk.Entry(self.entries_frame)
-        self.lrn.grid(row=0, column=3)
+        self.entries_frame_canvas.create_text(385, 43, text="LRN: ", font=LEXEND_DECA_10)
+        self.lrn = ttk.Entry(self.entries_frame, width=25)
+        self.lrn.grid(row=1, column=3, ipady=4)
 
         # Citizenship
-        self.entries_frame_canvas.create_text(700, 40, text="Citizenship: ")
-        self.citizenship = ttk.Entry(self.entries_frame)
-        self.citizenship.grid(row=1, column=3)
+        self.entries_frame_canvas.create_text(405, 88, text="Citizenship: ", font=LEXEND_DECA_10)
+        self.citizenship = ttk.Entry(self.entries_frame, width=25)
+        self.citizenship.grid(row=2, column=3, ipady=4)
 
         # Religion
-        self.entries_frame_canvas.create_text(700, 60, text="Religion: ")
-        self.religion = ttk.Entry(self.entries_frame)
-        self.religion.grid(row=2, column=3)
+        self.entries_frame_canvas.create_text(395, 133, text="Religion: ", font=LEXEND_DECA_10)
+        self.religion = ttk.Entry(self.entries_frame, width=25)
+        self.religion.grid(row=3, column=3, ipady=4)
 
         # Sex
-        self.entries_frame_canvas.create_text(700, 80, text="Sex: ")
+        self.entries_frame_canvas.create_text(380, 178, text="Sex: ", font=LEXEND_DECA_10)
         # self.sex = ttk.Entry(self.entries_frame)
         # self.sex.grid(row=3, column=3)
 
-        self.sex = ttk.Combobox(self.entries_frame, values=["Female", "Male"])
-        self.sex.grid(row=3, column=3)
+        self.sex = ttk.Combobox(self.entries_frame, values=["Female", "Male"], width=24)
+        self.sex.grid(row=4, column=3, ipady=4)
 
         self.load_student_data()
 
         # Edit Button
         self.is_edit_mode = False
-        self.edit_btn = tk.Button(self.entries_frame, text="Edit", command=self.toggle_edit_btn)
-        self.edit_btn.grid(row=6, column=3)
+        self.edit_btn = ttk.Button(self.entries_frame, text="Update Profile", command=self.toggle_edit_btn)
+        self.entries_frame_canvas.create_window(618, 315, window=self.edit_btn)
 
-        # Close Button
-        self.close_btn = tk.Button(self.entries_frame, text="Close", command=self.on_close)
-        self.close_btn.grid(row=6, column=2)
+        # Upload button
+        self.upload_btn = tk.Button(self, text="📷", command=lambda: self.upload_pfp(PFP_DIR),font=LEXEND_DECA_10)
+        self.upload_btn.place(x=165, y=110)  # Adjust position relative to pfp_label
+
+        self.pfp_label.lift()  # Moves it above other widgets
+        self.upload_btn.lift()
+
+        self.load_student_data()
+
+        # # Close Button
+        # self.close_btn = tk.Button(self.entries_frame, text="Close", command=self.on_close)
+        # self.close_btn.grid(row=6, column=2)
+
+
 
     def get_pfp_path(self, PFP_DIR, stu_id):
         pfp_path = PFP_DIR / f"student_{stu_id}.png"
@@ -170,7 +197,7 @@ class ViewStudentProfile(tk.Toplevel):
         return pfp_path if pfp_path.exists() else default_pfp # Checks if the file actually exists in the directory, otherwise it will return None
 
     def make_pfp_circle(self, pfp_path):
-        size = (100, 100)
+        size = (150, 150)
         pfp = Image.open(pfp_path).convert("RGBA")
         pfp = pfp.resize(size, Image.Resampling.LANCZOS) # Open image and ensure transparency support
 
@@ -213,7 +240,7 @@ class ViewStudentProfile(tk.Toplevel):
 
             # Reload the updated image
             self.pfp = self.make_pfp_circle(new_filepath)
-            self.header_frame_canvas.create_image(50, 50, anchor=tk.NW, image=self.pfp)
+            self.header_frame_canvas.create_image(48, 48, anchor=tk.NW, image=self.pfp)
             self.header_frame_canvas.image = self.pfp  # Keep reference to prevent garbage collection
 
             messagebox.showinfo("Success", "Profile picture updated successfully!")
@@ -264,7 +291,7 @@ class ViewStudentProfile(tk.Toplevel):
             # Validate inputs before saving
             if self.validate_update(self.entries):
                 self.is_edit_mode = False
-                self.edit_btn.config(text="Edit")
+                self.edit_btn.config(text="Update Profile")
                 self.save_changes(updated_data)
 
                 # Disable entries
