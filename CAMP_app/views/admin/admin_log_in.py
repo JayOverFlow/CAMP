@@ -96,9 +96,6 @@ class AdminLogIn(tk.Frame):
 
 
 
-        # self.short_cut() # NOTE: Remove this
-        self.short_cut()
-
     def log_in(self, event=None):
         admin_username = self.admin_username_entry.get().strip()
         admin_password = self.admin_password_entry.get().strip()
@@ -139,9 +136,4 @@ class AdminLogIn(tk.Frame):
 
         self.admin_username_entry.delete(0, tk.END)
         self.admin_password_entry.delete(0, tk.END)
-
-    def short_cut(self): # NOTE: Remove this
-        self.admin_username_entry.insert(0, "adminjay")
-        self.admin_password_entry.insert(0, "adminjay29")
-        self.log_in()
 
