@@ -82,7 +82,7 @@ class Main(tk.Tk):
             AdminLanding(self, self.admin_session)
         elif user == "Faculty":
             self.faculty_session = user_data
-            FacultyLanding(self)
+            FacultyLanding(self, self.faculty_session)
         elif user == "Student":
             self.student_session = user_data
             StudentLanding(self, self.student_session)
