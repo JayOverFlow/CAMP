@@ -4,7 +4,6 @@ import customtkinter as ctk
 
 from customtkinter import CTkButton
 
-from CAMP_app.views.student.faculty_eval import FacultyEvalView
 from CAMP_app.views.student.course_apply import CourseApplication
 
 

@@ -31,7 +31,7 @@ class AdminLanding(tk.Toplevel):
         FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
 
         # Font sizes
-        LEXEND_DECA_6 = font.Font(family="Lexend Deca", size=6)
+        LEXEND_DECA_6 = font.Font(family="Lexend Deca ", size=6)
         LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
 
         try:
