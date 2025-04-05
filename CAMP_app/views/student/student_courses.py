@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 import customtkinter as ctk
 
-from customtkinter import CTkButton
-
 from CAMP_app.views.student.faculty_eval import FacultyEvalView
 from CAMP_app.views.student.course_apply import CourseApplication
 
@@ -43,7 +41,6 @@ class StudentCoursesTab(tk.Frame):
 
         self.display_enrolled_courses(self.student_session["stu_id"])
 
-
         self.apply_btn = ctk.CTkButton(self, text="Apply for Course", corner_radius=7, fg_color="#8D0404",
                                        text_color="white", command=self.open_course_application)
         self.apply_btn.place(x=100, y=100)
@@ -74,8 +71,12 @@ class StudentCoursesTab(tk.Frame):
             btn.place(x=705, y=button_y_offset + (index * row_height))
 
     def open_course_application(self):
-        student_data = self.main.student_model.fetch_courses()
-        CourseApplication(self,self.student_landing,self.main,student_data)
+        # Get student ID from the current session
+        stu_id = self.student_session["stu_id"]
+
+        student_data = self.main.student_model.fetch_courses(stu_id)
+        # Initialize the CourseApplication and pass the student ID
+        CourseApplication(self, self.student_landing, self.main, student_data, stu_id)
 
     def evaluate_course(self):
         FacultyEvalView(self)
