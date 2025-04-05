@@ -220,6 +220,7 @@ class FacultyModel:
             cursor = conn.cursor(dictionary=True)
             query = """
         SELECT
+            e.eval_id,
             e.stu_id_fk,
             e.eval_rating,
             e.eval_comment,
@@ -234,6 +235,139 @@ class FacultyModel:
             result = cursor.fetchall()
             cursor.close()
             return result
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
+
+    def delete_evaluation(self, eval_id):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            query = "DELETE FROM evaluation_tbl WHERE eval_id = %s"
+            cursor.execute(query, (eval_id,))
+
+            if cursor.rowcount > 0:
+                conn.commit()
+                print("Evaluation deleted successfully.")
+                return True
+            else:
+                print("No ealuation found with the given ID.")
+                conn.rollback()
+                return False
+
+        except mysql.connector.Error as error:
+            print(f"Error removing evaluation: {error}")
+            return None
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_average_rating(self, fac_id):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = """
+            SELECT 
+                fac_id_fk, 
+                ROUND(AVG(eval_rating), 2) AS average_rating
+            FROM 
+                evaluation_tbl
+            WHERE 
+                fac_id_fk = %s
+            GROUP BY 
+                fac_id_fk
+                """
+            cursor.execute(query, (fac_id,))
+            ratings = cursor.fetchone()
+            if ratings:
+                return ratings["average_rating"]
+            else:
+                return 0.00
+            cursor.close()
+            return ratings
+
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
+
+    class FacultyModel:
+        def __init__(self, db):
+            self.db = db
+
+        def get_faculty_ratings(self, fac_id):
+            """Fetch the count of ratings (1-5 stars) for a faculty member."""
+            conn = self.db.get_connection()
+
+            if not conn:
+                return None
+
+            try:
+                cursor = conn.cursor(dictionary=True)
+                query = """
+                    SELECT eval_rating, COUNT(*) as count 
+                    FROM evaluation_tbl 
+                    WHERE fac_id_fk = %s 
+                    GROUP BY eval_rating
+                """
+                cursor.execute(query, (fac_id,))
+                results = cursor.fetchall()
+                cursor.close()
+
+                # Create a dictionary with rating counts initialized to 0
+                ratings = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+
+                # Populate the dictionary with actual counts
+                for row in results:
+                    ratings[row["eval_rating"]] = row["count"]
+
+                return ratings
+
+            except mysql.connector.Error as error:
+                print(error)
+                return None
+            finally:
+                conn.close()
+
+    def get_faculty_ratings(self, fac_id):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = """
+                SELECT eval_rating, COUNT(*) as count 
+                FROM evaluation_tbl 
+                WHERE fac_id_fk = %s 
+                GROUP BY eval_rating
+            """
+            cursor.execute(query, (fac_id,))
+            results = cursor.fetchall()
+            cursor.close()
+
+            # Create a dictionary with rating counts initialized to 0
+            ratings = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+
+            # Populate the dictionary with actual counts
+            for row in results:
+                ratings[row["eval_rating"]] = row["count"]
+
+            return ratings
+
         except mysql.connector.Error as error:
             print(error)
             return None
