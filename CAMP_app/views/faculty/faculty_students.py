@@ -37,8 +37,8 @@ class FacultyStudents(tk.Frame):
         result = self.main.faculty_model.get_faculty_course(self.fac_id)
         self.cou_id = result["cou_id"]
         fac_course = result["cou_name"]
-        self.students_canvas.create_text(20, 20, text=fac_course, font=LEXAND_DECA_20, fill="#8D0404", anchor=tk.NW)
-        self.students_canvas.create_text(540, 20, text="Student Profile", font=LEXAND_DECA_20, fill="#8D0404", anchor=tk.NW)
+        self.students_canvas.create_text(20, 20, text=fac_course, font=("Lexend Deca", 20, "bold"), fill="#8D0404", anchor=tk.NW)
+        self.students_canvas.create_text(540, 20, text="Student Profile", font=("Lexend Deca", 20, "bold"), fill="#8D0404", anchor=tk.NW)
 
         self.create_student_list()
 
@@ -149,7 +149,7 @@ class FacultyStudents(tk.Frame):
         self.grades_header = tk.Label(self.stu_grades_card, text="Student Grades").grid(row=0, column=0, columnspan=2)
 
         # Fields
-        self.written_works_lbl = tk.Label(self.stu_grades_card, text="Written Works (100):").grid(row=1, column=0)
+        self.written_works_lbl = tk.Label(self.stu_grades_card, text="Written Works (200):").grid(row=1, column=0)
         self.written_works = tk.Entry(self.stu_grades_card)
         self.written_works.grid(row=1, column=1)
 
@@ -237,7 +237,7 @@ class FacultyStudents(tk.Frame):
             examination = int(examination)
 
             # Validate ranges
-            if not (0 <= written_works <= 100):
+            if not (0 <= written_works <= 200):
                 messagebox.showwarning("Input Error", "Written Works must be between 0 and 100.")
                 return False
             if not (0 <= final_project <= 100):
@@ -260,7 +260,8 @@ class FacultyStudents(tk.Frame):
         except ValueError:
             return "Submit all scores to generate"
 
-        raw_grade = (written_works + final_project + (examination / 150 * 100)) / 3
+        # raw_grade = (written_works + final_project + (examination / 150 * 100)) / 3
+        raw_grade = ((written_works / 200) * 50) + ((final_project / 100) * 30) + ((examination / 150) * 20)
         return round(raw_grade, 2)
 
     def calculate_final_grade(self, raw_grade):
