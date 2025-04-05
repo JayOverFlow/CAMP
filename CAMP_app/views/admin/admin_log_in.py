@@ -94,8 +94,11 @@ class AdminLogIn(tk.Frame):
         self.back_btn = ttk.Button(self, text="◀", command=self.back, style='btnStyle.TButton')
         self.back_btn.place(anchor=tk.NW, x=900 , y=30, width=50, height=50)
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 69c2c8766d5be7438e3d42cf0659def24f6c58d0
     def log_in(self, event=None):
         admin_username = self.admin_username_entry.get().strip()
         admin_password = self.admin_password_entry.get().strip()
@@ -136,4 +139,7 @@ class AdminLogIn(tk.Frame):
 
         self.admin_username_entry.delete(0, tk.END)
         self.admin_password_entry.delete(0, tk.END)
+<<<<<<< HEAD
 
+=======
+>>>>>>> 69c2c8766d5be7438e3d42cf0659def24f6c58d0

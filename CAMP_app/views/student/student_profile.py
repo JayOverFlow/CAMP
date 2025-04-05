@@ -1,9 +1,9 @@
+import ctypes
 import tkinter as tk
 from tkinter import ttk, messagebox, font, filedialog
 import customtkinter as ctk
 from pathlib import Path
-
-from  PIL import ImageTk, Image, ImageDraw
+from PIL import ImageTk, Image, ImageDraw
 
 class StudentProfileTab(tk.Frame):
     def __init__(self, parent, main, student_landing):
@@ -28,6 +28,29 @@ class StudentProfileTab(tk.Frame):
             ("Religion", "stu_religion"),
             ("Profile Image", "profile_picture"),
         ]
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+        IMAGES_DIR = BASE_DIR / "static/images"
+
+        FONT_DIR = BASE_DIR / "static/fonts"
+        FONT_PATH = FONT_DIR / "LexandDeca-Bold.ttf"
+
+        LEXAND_DECA_6 = font.Font(family="Lexand Deca", size=6)
+        LEXAND_DECA_10 = font.Font(family="Lexand Deca", size=10)
+        LEXAND_DECA_12 = font.Font(family="Lexand Deca", size=12)
+        LEXAND_DECA_14 = font.Font(family="Lexand Deca", size=14)
+        LEXAND_DECA_16 = font.Font(family="Lexand Deca", weight="bold", size=16)
+        LEXAND_DECA_18 = font.Font(family="Lexand Deca",weight="bold",  size=18)
+        LEXAND_DECA_20 = font.Font(family="Lexand Deca", size=20)
+        LEXAND_DECA_40 = font.Font(family="Lexand Deca", weight="bold", size=40)
+
+        try:
+            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
+        except Exception as e:
+            print(f"Error loading font: {e}")
+
+        self.full_name = ttk.Label(self, text=self.student_session["stu_full_name"])
+        self.full_name.place(x=5, y=100)
 
         self.widgets = {}
         self.edit_mode = False

@@ -103,9 +103,28 @@ class FacultyLogIn(tk.Frame):
         result = self.main.user_auth.authenticate_faculty(faculty_username, faculty_password) # NOTE: Create authentication
 
         if result:
-            messagebox.showinfo("Authentication Success", "Successfully logged in")
+            # Store faculty's data as session
+            faculty_data = {
+                "fac_id": result["fac_id"],
+                "fac_username": result["fac_username"],
+                "fac_first_name": result["fac_first_name"],
+                "fac_middle_name": result["fac_middle_name"],
+                "fac_full_name": result["fac_full_name"],
+                "fac_email": result["fac_email"],
+                "fac_phone_number": result["fac_phone_number"]
+            }
+
+            # Clear input fields
+            self.faculty_username_entry.delete(0, tk.END)
+            self.faculty_password_entry.delete(0, tk.END)
+
+            self.main.withdraw()
+
+            self.main.open_user_landing("Faculty", faculty_data)
+
+        # Authentication failed
         else:
-            messagebox.showerror("Authentication Failed", "Failed to log in")
+            messagebox.showwarning("Login Failed", "Username or Password is invalid")
             self.faculty_password_entry.delete(0, tk.END)
             self.faculty_password_entry.focus_set()
 
