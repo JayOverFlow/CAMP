@@ -229,7 +229,7 @@ class AdmitStudent(tk.Toplevel):
             self.close()
 
     def enroll_student(self, first_name, middle_name, last_name,birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address):
-        self.main.admin_model.enroll_student(first_name, middle_name, last_name,birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address)
+        self.main.admin_model.admit_student(first_name, middle_name, last_name, birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address)
         self.admin_dashboard.display_students() # Refresh the admin dashboard student list
 
     def close(self):
