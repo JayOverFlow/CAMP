@@ -304,7 +304,6 @@ class FacultyModel:
             conn.close()
 
     def get_faculty_ratings(self, fac_id):
-            """Fetch the count of ratings (1-5 stars) for a faculty member."""
             conn = self.db.get_connection()
 
             if not conn:
@@ -325,7 +324,7 @@ class FacultyModel:
                 # Create a dictionary with rating counts initialized to 0
                 ratings = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
 
-                # Populate the dictionary with actual counts
+                # Fill the dictionary with actual counts
                 for row in results:
                     ratings[row["eval_rating"]] = row["count"]
 
@@ -336,36 +335,3 @@ class FacultyModel:
                 return None
             finally:
                 conn.close()
-
-    def get_faculty_ratings(self, fac_id):
-        conn = self.db.get_connection()
-
-        if not conn:
-            return None
-
-        try:
-            cursor = conn.cursor(dictionary=True)
-            query = """
-                SELECT eval_rating, COUNT(*) as count 
-                FROM evaluation_tbl 
-                WHERE fac_id_fk = %s 
-                GROUP BY eval_rating
-            """
-            cursor.execute(query, (fac_id,))
-            results = cursor.fetchall()
-            cursor.close()
-
-            # Create a dictionary with rating counts initialized to 0
-            ratings = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-
-            # Populate the dictionary with actual counts
-            for row in results:
-                ratings[row["eval_rating"]] = row["count"]
-
-            return ratings
-
-        except mysql.connector.Error as error:
-            print(error)
-            return None
-        finally:
-            conn.close()
