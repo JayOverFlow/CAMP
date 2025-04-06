@@ -1,13 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import customtkinter as ctk
-
-<<<<<<< HEAD
-from CAMP_app.views.student.faculty_eval import FacultyEvalView
-=======
 from customtkinter import CTkButton
-
->>>>>>> 69c2c8766d5be7438e3d42cf0659def24f6c58d0
 from CAMP_app.views.student.course_apply import CourseApplication
 
 
@@ -84,7 +78,7 @@ class StudentCoursesTab(tk.Frame):
         CourseApplication(self, self.student_landing, self.main, student_data, stu_id)
 
     def evaluate_course(self):
-        FacultyEvalView(self)
+        pass
 
 
 
