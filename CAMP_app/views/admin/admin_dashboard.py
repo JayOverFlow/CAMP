@@ -84,8 +84,8 @@ class AdminDashboard(tk.Frame):
         # Faculty count
         self.dashboard_canvas.create_text(660, 120, text=self.display_faculty_count(), font=LEXAND_DECA_40,fill="#000000", anchor=tk.NW)
 
-        # Enroll student button
-        self.enroll_btn = tk.Button(self.dashboard_canvas, text="+  Enroll Student", command=lambda: self.enroll_student(), font=LEXAND_DECA_10, anchor=tk.NW, bg="#8D0404", fg="#FFFFFF", padx=5 , pady=5)
+        # Admit student button
+        self.enroll_btn = tk.Button(self.dashboard_canvas, text="+  Admit Student", command=lambda: self.admit_student(), font=LEXAND_DECA_10, anchor=tk.NW, bg="#8D0404", fg="#FFFFFF", padx=5, pady=5)
         self.enroll_btn.place(x=420, y=300)
 
         # Search bar
@@ -149,7 +149,7 @@ class AdminDashboard(tk.Frame):
         faculty_count = self.main.admin_model.get_faculty_count()
 
         return faculty_count
-    def enroll_student(self):
+    def admit_student(self):
         self.admin_landing.attributes("-disabled", True) # Disable the interaction
         self.admin_landing.wait_window(AdmitStudent(self.main, self.admin_landing)) # Wait for the popup
         self.admin_landing.attributes("-disabled", False) # Re-enable the interaction
