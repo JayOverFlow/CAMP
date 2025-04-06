@@ -4,8 +4,6 @@ class FacultyModel:
     def __init__(self, database):
         self.db = database
 
-<<<<<<< HEAD
-=======
     def get_faculty_course(self, fac_id):
         conn = self.db.get_connection()
 
@@ -305,11 +303,7 @@ class FacultyModel:
         finally:
             conn.close()
 
-    class FacultyModel:
-        def __init__(self, db):
-            self.db = db
-
-        def get_faculty_ratings(self, fac_id):
+    def get_faculty_ratings(self, fac_id):
             """Fetch the count of ratings (1-5 stars) for a faculty member."""
             conn = self.db.get_connection()
 
@@ -375,4 +369,3 @@ class FacultyModel:
             return None
         finally:
             conn.close()
->>>>>>> 69c2c8766d5be7438e3d42cf0659def24f6c58d0
