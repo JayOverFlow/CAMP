@@ -1,7 +1,12 @@
 import ctypes
 import tkinter as tk
+from tkinter import ttk
 from pathlib import Path
 from tkinter import messagebox, font
+from PIL import Image, ImageTk
+import customtkinter as ctk
+from customtkinter import CTkImage
+
 
 # Content Frames
 from CAMP_app.views.student.student_courses import StudentCoursesTab
@@ -19,13 +24,19 @@ class StudentLanding(tk.Toplevel):
         self.title("Student Landing")
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
-        BASE_DIR = Path(__file__).resolve().parent.parent
 
-        IMAGES_DIR = BASE_DIR / "static/images"
+        # Initialize ttk.Style
+        self.style = ttk.Style()  # ✅ Define self.style before using it
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+        # Images directory
+        self.IMAGES_DIR = BASE_DIR / "static/images"
 
         FONTS_DIR = BASE_DIR / "static/fonts"
         FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
+
         # Font sizes
+        LEXEND_DECA_6 = font.Font(family="Lexend Deca", size=6)
         LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
         LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
         LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
@@ -61,29 +72,82 @@ class StudentLanding(tk.Toplevel):
         self.sidebar_canvas = tk.Canvas(self.sidebar, bg="#8D0404")
         self.sidebar_canvas.pack(fill=tk.BOTH, expand=True)
 
-        # Student Full Name
-        self.sidebar_canvas.create_text(20, 20, text=self.student_session["stu_full_name"], font=LEXEND_DECA_10, fill="#FFFFFF", anchor=tk.NW)
+        # Student username
+        icon_student_path = self.IMAGES_DIR / "ProfileIcon.png"
+        icon_student = Image.open(icon_student_path)
+        icon_student = icon_student.resize((50, 50), Image.Resampling.LANCZOS)
+        self.icon_student = ImageTk.PhotoImage(icon_student)
+        self.sidebar_canvas.create_image(45, 20, image=self.icon_student, anchor=tk.NW)
+        self.sidebar_canvas.create_text(30, 68, text=self.student_session["stu_full_name"], font=LEXEND_DECA_10,
+                                        fill="#FFFFFF", anchor=tk.NW)
+        self.sidebar_canvas.create_text(40, 85, text="Student", font=LEXEND_DECA_6 , fill="#FFFFFF", anchor=tk.NW)
+
+        # Button images dictionary
+        self.button_images = {
+            'StudentProfile': {
+                'active': self.load_image("ProfileButton.png"),
+                'inactive': self.load_image("ProfileButtonActive.png")
+            },
+            'StudentCourses': {
+                'active': self.load_image("CoursesButtonActive.png"),
+                'inactive': self.load_image("CoursesButton.png")
+            },
+            'StudentSchedule': {
+                'active': self.load_image("ScheduleButton.png"),
+                'inactive': self.load_image("ScheduleButtonActive.png")
+            }
+        }
 
         # Profile Button Tab
-        self.profile_btn = tk.Button(self.sidebar, text="Profile", command=lambda: self.display_frame("StudentProfileTab"))
-        self.profile_btn.place(x=2, y=100)
+        self.profile_btn = ctk.CTkButton(
+            self.sidebar, width=134, height=70, border_width=0, corner_radius=0, text="",
+            image=self.button_images['StudentProfile']['inactive'],
+            fg_color="transparent",
+            command=lambda: self.display_frame("StudentProfileTab")
+        )
+        self.profile_btn.place(x=2, y=200)
 
         # Course Button Tab
-        self.course_btn = tk.Button(self.sidebar, text="Courses", command=lambda: self.display_frame("StudentCoursesTab"))
-        self.course_btn.place(x=2, y=200)
+        self.course_btn = ctk.CTkButton(
+            self.sidebar, width=134, height=70, border_width=0, corner_radius=0, text="",
+            image=self.button_images['StudentCourses']['inactive'],
+            fg_color="transparent",
+            command=lambda: self.display_frame("StudentCoursesTab")
+        )
+        self.course_btn.place(x=2, y=270)
 
         # Schedule Button Tab
-        self.sched_btn = tk.Button(self.sidebar, text="Schedule", command=lambda: self.display_frame("StudentScheduleTab"))
-        self.sched_btn.place(x=2, y=350)
+        self.sched_btn = ctk.CTkButton(
+            self.sidebar, width=134, height=70, border_width=0, corner_radius=0, text="",
+            image=self.button_images['StudentSchedule']['inactive'],
+            fg_color="transparent",
+            command=lambda: self.display_frame("StudentScheduleTab")
+        )
+        self.sched_btn.place(x=2, y=340)
 
         # Logout
-        self.logout_btn = tk.Button(self.sidebar, text="Logout", command=self.log_out)
+        self.logout_btn = ctk.CTkButton(self.sidebar, width=134, height=70, border_width=0, corner_radius=0,
+                                        text="LogOut",
+                                        command=self.log_out)
         self.logout_btn.place(x=2, y=500)
 
         self.display_frame("StudentProfileTab")
 
-
     def display_frame(self, frame_name):
+        # Reset all buttons to inactive images
+        self.profile_btn.configure(image=self.button_images['StudentProfile']['inactive'])
+        self.course_btn.configure(image=self.button_images['StudentCourses']['inactive'])
+        self.sched_btn.configure(image=self.button_images['StudentSchedule']['inactive'])
+
+        # Set the clicked button to active
+        if frame_name == "StudentProfileTab":
+            self.profile_btn.configure(image=self.button_images['StudentProfile']['active'])
+        elif frame_name == "StudentCoursesTab":
+            self.course_btn.configure(image=self.button_images['StudentCourses']['active'])
+        elif frame_name == "StudentScheduleTab":
+            self.sched_btn.configure(image=self.button_images['StudentSchedule']['active'])
+
+        # Show the selected frame
         frame = self.dict_frames[frame_name]
         frame.lift()
 
@@ -102,3 +166,9 @@ class StudentLanding(tk.Toplevel):
             self.main.clear_user_session("Student") # Clear the admin session
             self.destroy() # Close the dashboard
             self.main.deiconify() # Display the home screen
+
+    def load_image(self, filename):
+        path = self.IMAGES_DIR / filename
+        image = Image.open(path)
+        image = image.resize((140, 65), Image.Resampling.LANCZOS)
+        return CTkImage(light_image=image, dark_image=image, size=(140, 65))
