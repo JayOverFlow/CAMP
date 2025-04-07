@@ -145,7 +145,7 @@ class StudentModel:
         finally:
             conn.close()
 
-    def add_eval(self, student_id, professor_id, rating, comment):
+    def add_eval(self, student_id, faculty_id, eval_rating, eval_comment):
         conn = self.db.get_connection()
 
         if not conn:
@@ -153,19 +153,100 @@ class StudentModel:
             return None
 
         try:
-            cursor = conn.cursor(dictionary=True)  # Ensure dictionary cursor is supported
-            query = """ 
-                INSERT INTO evaluational_tbl (stu_id_fk, fac_id_fk, eval_rating, eval_comment, eval_date)
+            cursor = conn.cursor(dictionary=True)  # Standard cursor for queries and inserts
+
+            # Check if the student has already evaluated this faculty member
+            check_query = """
+                SELECT COUNT(*) AS count FROM evaluation_tbl
+                WHERE stu_id_fk = %s AND fac_id_fk = %s
+            """
+            cursor.execute(check_query, (student_id, faculty_id))
+            result = cursor.fetchone()
+
+            if result["count"] > 0:
+                print("Student has already evaluated this faculty member.")
+                return None
+
+            # Proceed with insertion if no prior evaluation exists
+            insert_query = """ 
+                INSERT INTO evaluation_tbl (stu_id_fk, fac_id_fk, eval_rating, eval_comment, eval_date)
                 VALUES (%s, %s, %s, %s, NOW())
             """
-            cursor.execute(query, (student_id, professor_id, rating, comment))
+            cursor.execute(insert_query, (student_id, faculty_id, eval_rating, eval_comment))
+
             conn.commit()  # Commit transaction
             print("Evaluation successfully added.")
+            return cursor.lastrowid  # Return the inserted record ID if needed
 
         except Exception as e:
             print(f"Error adding evaluation: {e}")
             conn.rollback()  # Rollback in case of error
 
         finally:
-            cursor.close()  # Close cursor
-            conn.close()  # Close connection
+            if cursor:
+                cursor.close()  # Close cursor
+            if conn:
+                conn.close()  # Close connection
+
+    def get_faculty_id(self, professor_name):
+        # Establish a connection to the database
+        conn = self.db.get_connection()
+
+        # Check if the connection was successful
+        if not conn:
+            raise Exception("Unable to connect to the database")
+
+        try:
+            # Create a cursor object to execute the query
+            cursor = conn.cursor()
+
+            # Define the SQL query to search by professor's name
+            query = "SELECT fac_id FROM faculty_tbl WHERE fac_full_name = %s"
+
+            # Execute the query with the provided professor_name
+            cursor.execute(query, (professor_name,))
+
+            # Fetch the result
+            faculty_record = cursor.fetchone()
+
+            # If a record is found, return the faculty ID
+            if faculty_record:
+                return faculty_record[0]  # Assuming the first column is fac_id
+            else:
+                return None
+
+        except Exception as e:
+            # Handle any exceptions that occur during the query
+            print(f"An error occurred: {e}")
+            return None
+
+        finally:
+            # Make sure to close the cursor and connection
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+    def update_student_pfp(self, stu_id, file_name):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+
+        try:
+            cursor = conn.cursor()
+            query = "UPDATE student_tbl SET profile_picture = %s WHERE stu_id = %s"
+            cursor.execute(query, (file_name, stu_id))
+            if cursor.rowcount > 0:
+                conn.commit()
+                cursor.close()
+                print("Profile picture updated successfully!")
+                return True
+            else:
+                print("Failed to upload profile picture")
+                conn.rollback()
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
