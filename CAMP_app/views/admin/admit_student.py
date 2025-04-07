@@ -1,6 +1,10 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+import customtkinter as ctk
+import ctypes
+from tkinter import ttk, messagebox, font
 from tkcalendar import DateEntry
+from pathlib import Path
+
 
 
 class AdmitStudent(tk.Toplevel):
@@ -10,8 +14,25 @@ class AdmitStudent(tk.Toplevel):
         self.admin_dashboard = parent
 
         self.title("Admit Student")
-        self.geometry("1000x600+120+20")
+        self.geometry("800x495+240+70")
         self.resizable(False, False)
+        BASE_DIR = Path(__file__).resolve().parent.parent
+
+        IMAGES_DIR = BASE_DIR / "static/images"
+
+        FONTS_DIR = BASE_DIR / "static/fonts"
+        FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
+        # Font sizes
+        LEXEND_DECA_8 = font.Font(family="Lexend Deca", size=8)
+        LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
+        LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
+        LEXEND_DECA_16 = font.Font(family="Lexend Deca", size=16)
+        LEXEND_DECA_18 = font.Font(family="Lexend Deca", size=18)
+        LEXEND_DECA_20 = font.Font(family="Lexend Deca", size=20)
+        try:
+            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
+        except Exception as e:
+            print(f"Error loading font: {e}")
 
         self.main_frame = tk.Frame(self)
         self.main_frame.pack(fill="both", expand=True)
@@ -31,96 +52,96 @@ class AdmitStudent(tk.Toplevel):
         }
 
         # First name
-        self.first_name_lbl = tk.Label(self.main_frame, text="First Name")
-        self.first_name_lbl.grid(row=0, column=0)
-        self.first_name = tk.Entry(self.main_frame)
-        self.first_name.grid(row=0, column=1)
+        self.first_name_lbl = ctk.CTkLabel(self.main_frame, text="First Name", font=("Lexand Deca", 11, "bold"), text_color="#8D0404", anchor="e", height=20)
+        self.first_name_lbl.place(x=50, y=18)
+        self.first_name = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
+        self.first_name.place(x=50, y=35)
 
         # Middle name
-        self.middle_name_lbl = tk.Label(self.main_frame, text="Middle Name")
-        self.middle_name_lbl.grid(row=1, column=0)
-        self.middle_name = tk.Entry(self.main_frame)
-        self.middle_name.grid(row=1, column=1)
+        self.middle_name_lbl = ctk.CTkLabel(self.main_frame, text="Middle Name", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.middle_name_lbl.place(x=50, y=71)
+        self.middle_name = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
+        self.middle_name.place(x=50, y=93)
 
         # Last name
-        self.last_name_lbl = tk.Label(self.main_frame, text="Last Name")
-        self.last_name_lbl.grid(row=2, column=0)
-        self.last_name = tk.Entry(self.main_frame)
-        self.last_name.grid(row=2, column=1)
+        self.last_name_lbl = ctk.CTkLabel(self.main_frame, text="Last Name", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.last_name_lbl.place(x=50, y=128)
+        self.last_name = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
+        self.last_name.place(x=50, y=148)
 
         # Sex
-        self.sex_lbl = tk.Label(self.main_frame, text="Sex")
-        self.sex_lbl.grid(row=3, column=0)
+        self.sex_lbl = ctk.CTkLabel(self.main_frame, text="Sex", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.sex_lbl.place(x=50, y=185)
         self.sex_var = tk.StringVar(value="Select")  # Set placeholder value
-        self.sex_dropdown = ttk.Combobox(self.main_frame, textvariable=self.sex_var, values=["Female", "Male"], state="readonly")
-        self.sex_dropdown.grid(row=3, column=1)
+        self.sex_dropdown = ttk.Combobox(self.main_frame, textvariable=self.sex_var, values=["Female", "Male"], state="readonly" , width=50)
+        self.sex_dropdown.place(x=50, y=208)
 
         # Address
-        self.address_lbl = tk.Label(self.main_frame, text="Address")
-        self.address_lbl.grid(row=4, column=0)
-        self.address = tk.Text(self.main_frame, height=3, width=30)
-        self.address.grid(row=4, column=1)
+        self.address_lbl = ctk.CTkLabel(self.main_frame, text="Address", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.address_lbl.place(x=50, y=252)
+        self.address = ctk.CTkTextbox(self.main_frame, height=90, width=320, corner_radius=0, border_width=1)
+        self.address.place(x=50, y=272)
 
         # Citizenship
-        self.citizenship_lbl = tk.Label(self.main_frame, text="Citizenship")
-        self.citizenship_lbl.grid(row=0, column=2)
-        self.citizenship = tk.Entry(self.main_frame)
-        self.citizenship.grid(row=0, column=3)
+        self.citizenship_lbl = ctk.CTkLabel(self.main_frame, text="Citizenship", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.citizenship_lbl.place(x=420, y=15)
+        self.citizenship = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
+        self.citizenship.place(x=420, y=35)
 
         # LRN
-        self.lrn_lbl = tk.Label(self.main_frame, text="LRN")
-        self.lrn_lbl.grid(row=1, column=2)
-        self.lrn = tk.Entry(self.main_frame)
-        self.lrn.grid(row=1, column=3)
+        self.lrn_lbl = ctk.CTkLabel(self.main_frame, text="LRN", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.lrn_lbl.place(x=420, y=71)
+        self.lrn = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
+        self.lrn.place(x=420, y=93)
 
         # Phone
-        self.phone_lbl = tk.Label(self.main_frame, text="Phone")
-        self.phone_lbl.grid(row=2, column=2)
-        self.phone = tk.Entry(self.main_frame)
-        self.phone.grid(row=2, column=3)
+        self.phone_lbl = ctk.CTkLabel(self.main_frame, text="Phone", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.phone_lbl.place(x=420, y=128)
+        self.phone = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
+        self.phone.place(x=420, y=148)
 
         # Email
-        self.email_lbl = tk.Label(self.main_frame, text="Email")
-        self.email_lbl.grid(row=3, column=2)
-        self.email = tk.Entry(self.main_frame)
-        self.email.grid(row=3, column=3)
+        self.email_lbl = ctk.CTkLabel(self.main_frame, text="Email", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.email_lbl.place(x=420, y=185)
+        self.email = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
+        self.email.place(x=420, y=208)
 
         # Birthdate
-        self.birthdate_lbl = tk.Label(self.main_frame, text="Birthdate")
-        self.birthdate_lbl.grid(row=4, column=2)
-        self.birthdate = DateEntry(self.main_frame, width=12, background="darkblue", foreground="white", date_pattern="yyyy-mm-dd")
-        self.birthdate.grid(row=4, column=3)
+        self.birthdate_lbl = ctk.CTkLabel(self.main_frame, text="Birthdate", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.birthdate_lbl.place(x=420, y=252)
+        self.birthdate = DateEntry(self.main_frame, width=22, height=40, background="darkblue", foreground="white", date_pattern="yyyy-mm-dd")
+        self.birthdate.place(x=420, y=272)
         self.birthdate.delete(0, tk.END)
 
         # Religion
-        self.religion_lbl = tk.Label(self.main_frame, text="Religion")
-        self.religion_lbl.grid(row=5, column=2)
-        self.religion = tk.Entry(self.main_frame)
-        self.religion.grid(row=5, column=3)
+        self.religion_lbl = ctk.CTkLabel(self.main_frame, text="Religion", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.religion_lbl.place(x=590, y=252)
+        self.religion = ctk.CTkEntry(self.main_frame, width=150, height=32, corner_radius=0, border_width=1)
+        self.religion.place(x=590, y=272)
 
         # Username
-        self.username_lbl = tk.Label(self.main_frame, text="Username")
-        self.username_lbl.grid(row=6, column=2)
-        self.username = tk.Entry(self.main_frame)
-        self.username.grid(row=6, column=3)
+        self.username_lbl = ctk.CTkLabel(self.main_frame, text="Username", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.username_lbl.place(x=420, y=309)
+        self.username = ctk.CTkEntry(self.main_frame, width=150, height=32, corner_radius=0, border_width=1)
+        self.username.place(x=420, y=330)
 
         # Password
-        self.password_lbl = tk.Label(self.main_frame, text="Password")
-        self.password_lbl.grid(row=7, column=2)
-        self.password = tk.Entry(self.main_frame, show="*")
-        self.password.grid(row=7, column=3)
+        self.password_lbl = ctk.CTkLabel(self.main_frame, text="Password", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.password_lbl.place(x=590, y=309)
+        self.password = ctk.CTkEntry(self.main_frame, show="*", width=150, height=32, corner_radius=0, border_width=1)
+        self.password.place(x=590, y=330)
 
         # Confirm Password
-        self.confirm_password_lbl = tk.Label(self.main_frame, text="Confirm Password")
-        self.confirm_password_lbl.grid(row=7, column=2)
-        self.confirm_password = tk.Entry(self.main_frame, show="*")
-        self.confirm_password.grid(row=8, column=3)
+        self.confirm_password_lbl = ctk.CTkLabel(self.main_frame, text="Confirm Password",font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
+        self.confirm_password_lbl.place(x=590, y=370)
+        self.confirm_password = ctk.CTkEntry(self.main_frame, show="*", corner_radius=0, border_width=1, width=150, height=32)
+        self.confirm_password.place(x=590, y=390)
 
-        self.admit_btn = tk.Button(self.main_frame, text="Admit Student", command=self.validate_fields)
-        self.admit_btn.grid(row=4, column=4)
+        self.admit_btn = ctk.CTkButton(self.main_frame, text="Enroll Student", command=self.validate_fields,fg_color="#8D0404", hover_color="#8D0404", corner_radius=10, width=150)
+        self.admit_btn.place(x=590, y=440)
 
-        self.close_btn = tk.Button(self.main_frame, text="Close", command=self.close)
-        self.close_btn.grid(row=6, column=4)
+        self.close_btn = ctk.CTkButton(self.main_frame, text="Close", command=self.close, fg_color="#8D0404", hover_color="#8D0404", corner_radius=10)
+        self.close_btn.place(x=430, y=440)
 
     def validate_fields(self):
         middle_name = None
