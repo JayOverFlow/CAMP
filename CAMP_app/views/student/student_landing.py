@@ -69,7 +69,7 @@ class StudentLanding(tk.Toplevel):
         self.sidebar.pack_propagate(False)
 
         # Canvas for sidebar
-        self.sidebar_canvas = tk.Canvas(self.sidebar, bg="#8D0404")
+        self.sidebar_canvas = tk.Canvas(self.sidebar, bg="#8D0404", bd=0, highlightthickness=0)
         self.sidebar_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Student username
@@ -100,30 +100,30 @@ class StudentLanding(tk.Toplevel):
 
         # Profile Button Tab
         self.profile_btn = ctk.CTkButton(
-            self.sidebar, width=134, height=70, border_width=0, corner_radius=0, text="",
+            self.sidebar, width=138, height=70, border_width=0, corner_radius=0, text="",
             image=self.button_images['StudentProfile']['inactive'],
             fg_color="transparent",
             command=lambda: self.display_frame("StudentProfileTab")
         )
-        self.profile_btn.place(x=2, y=200)
+        self.profile_btn.place(x=0, y=200)
 
         # Course Button Tab
         self.course_btn = ctk.CTkButton(
-            self.sidebar, width=134, height=70, border_width=0, corner_radius=0, text="",
+            self.sidebar, width=138, height=70, border_width=0, corner_radius=0, text="",
             image=self.button_images['StudentCourses']['inactive'],
             fg_color="transparent",
             command=lambda: self.display_frame("StudentCoursesTab")
         )
-        self.course_btn.place(x=2, y=270)
+        self.course_btn.place(x=0, y=270)
 
         # Schedule Button Tab
         self.sched_btn = ctk.CTkButton(
-            self.sidebar, width=134, height=70, border_width=0, corner_radius=0, text="",
+            self.sidebar, width=138, height=70, border_width=0, corner_radius=0, text="",
             image=self.button_images['StudentSchedule']['inactive'],
             fg_color="transparent",
             command=lambda: self.display_frame("StudentScheduleTab")
         )
-        self.sched_btn.place(x=2, y=340)
+        self.sched_btn.place(x=0, y=340)
 
         # Logout
         self.logout_btn = ctk.CTkButton(self.sidebar, width=134, height=70, border_width=0, corner_radius=0,

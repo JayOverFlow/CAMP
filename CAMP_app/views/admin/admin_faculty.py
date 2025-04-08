@@ -32,7 +32,7 @@ class AdminFaculty(tk.Frame):
             print(f"Error loading font: {e}")
 
         # Canvas
-        self.faculty_canvas = tk.Canvas(self, bg="#D9D9D9")
+        self.faculty_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.faculty_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Faculty Label

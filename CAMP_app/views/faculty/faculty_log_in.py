@@ -9,7 +9,7 @@ class FacultyLogIn(tk.Frame):
     def __init__(self, parent, main): # parent is a container and the controller is referenced to the main for frame switching
         super().__init__(parent) # pass the parent parameter as container
         self.main = main
-        self.canvas = tk.Canvas(self)
+        self.canvas = tk.Canvas(self, bd=0, highlightthickness=0)
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
         # Get the base directory of the project
@@ -91,6 +91,8 @@ class FacultyLogIn(tk.Frame):
         self.back_btn = ttk.Button(self, text="◀", command=self.back, style='btnStyle.TButton')
         self.back_btn.place(anchor=tk.NW, x=900, y=30, width=50, height=50)
 
+        # self.short_cut() # NOTE: Remove this
+
 
     def log_in(self, event=None):
         faculty_username = self.faculty_username_entry.get().strip()
@@ -133,3 +135,8 @@ class FacultyLogIn(tk.Frame):
 
         self.faculty_username_entry.delete(0, tk.END)
         self.faculty_password_entry.delete(0, tk.END)
+
+    def short_cut(self): # NOTE: Remove this
+        self.faculty_username_entry.insert("", "rdrd")
+        self.faculty_password_entry.insert("", "rd123")
+        self.log_in()

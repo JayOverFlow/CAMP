@@ -29,7 +29,7 @@ class FacultyEvaluation(tk.Frame):
         LEXAND_DECA_20 = font.Font(family="Lexand Deca", weight="bold", size=20)
         LEXAND_DECA_40 = font.Font(family="Lexand Deca", weight="bold", size=40)
 
-        self.evaluation_canvas = tk.Canvas(self, bg="#D9D9D9")
+        self.evaluation_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.evaluation_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Header
@@ -70,7 +70,7 @@ class FacultyEvaluation(tk.Frame):
         self.evaluation_list.pack_propagate(False)
 
         # Create a canvas with scrollbar
-        canvas = tk.Canvas(self.evaluation_list, bg="#D9D9D9", highlightthickness=0)
+        canvas = tk.Canvas(self.evaluation_list, bg="#D9D9D9", bd=0, highlightthickness=0)
         scrollbar = tk.Scrollbar(self.evaluation_list, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas, bg="#D9D9D9")
 
@@ -103,7 +103,7 @@ class FacultyEvaluation(tk.Frame):
         # Load Trash Button image
         trash_path = self.IMAGES_DIR / "TrashButton.png"
         trash = Image.open(trash_path)
-        trash = trash.resize((48, 90), Image.Resampling.LANCZOS)
+        trash = trash.resize((48, 92), Image.Resampling.LANCZOS)
         self.trash = ImageTk.PhotoImage(trash)
 
         if evaluations:
@@ -112,8 +112,10 @@ class FacultyEvaluation(tk.Frame):
                 eval_card.pack(fill="x", pady=2)
                 eval_card.pack_propagate(False)
 
-                eval_card_canvas = tk.Canvas(eval_card, bg="#FFFFFF")
+                eval_card_canvas = tk.Canvas(eval_card, bg="#FFFFFF", bd=0, highlightthickness=0)
                 eval_card_canvas.pack(fill=tk.BOTH, expand=True)
+
+                eval_card_canvas.create_line(0, 0, 0, 80, fill="#8D0404", width=8)
 
                 # Student profile picture
                 pfp_path = self.get_pfp_path(self.PFP_DIR, evaluation["stu_id_fk"])
@@ -138,7 +140,7 @@ class FacultyEvaluation(tk.Frame):
                 eval_card_canvas.create_image(564, 15, image=self.star, anchor=tk.NW)
 
                 # Delete Button
-                delete_btn = tk.Button(eval_card, width=34, height=76, borderwidth=0,
+                delete_btn = tk.Button(eval_card, width=34, height=78, borderwidth=0,
                                        image=self.trash,
                                        command=lambda eval_id=evaluation["eval_id"],
                                                       card=eval_card: self.delete_evaluation(eval_id, card))
@@ -207,8 +209,7 @@ class FacultyEvaluation(tk.Frame):
         canvas_height = 140
         canvas_width = 140
 
-        canvas = tk.Canvas(self.analytics_frame, width=canvas_width, height=canvas_height, bg="#FFFFFF",
-                           highlightthickness=0)
+        canvas = tk.Canvas(self.analytics_frame, width=canvas_width, height=canvas_height, bg="#FFFFFF", bd=0, highlightthickness=0)
         canvas.pack()
 
         y_offset = 10

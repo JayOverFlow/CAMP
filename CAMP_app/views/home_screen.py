@@ -10,7 +10,7 @@ class HomeScreen(tk.Frame):
         super().__init__(parent)
         self.main = main
 
-        self.canvas = tk.Canvas(self)
+        self.canvas = tk.Canvas(self, bd=0, highlightthickness=0)
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
         # Get the base directory of the project
