@@ -31,7 +31,7 @@ class AdminCourses(tk.Frame):
             print(f"Error loading font: {e}")
 
         # Canvas
-        self.courses_canvas = tk.Canvas(self, bg="#D9D9D9")
+        self.courses_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.courses_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Course Header

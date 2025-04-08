@@ -10,7 +10,7 @@ class AdminLogIn(tk.Frame):
         super().__init__(parent) # pass the parent parameter as container
         self.main = main
 
-        self.canvas = tk.Canvas(self)
+        self.canvas = tk.Canvas(self, bd=0, highlightthickness=0)
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
         # Get the base directory of the project
@@ -94,6 +94,8 @@ class AdminLogIn(tk.Frame):
         self.back_btn = ttk.Button(self, text="◀", command=self.back, style='btnStyle.TButton')
         self.back_btn.place(anchor=tk.NW, x=900 , y=30, width=50, height=50)
 
+        # self.short_cut() # NOTE: Remove this
+
     def log_in(self, event=None):
         admin_username = self.admin_username_entry.get().strip()
         admin_password = self.admin_password_entry.get().strip()
@@ -134,3 +136,8 @@ class AdminLogIn(tk.Frame):
 
         self.admin_username_entry.delete(0, tk.END)
         self.admin_password_entry.delete(0, tk.END)
+
+    def short_cut(self): # NOTE: Remove this
+        self.admin_username_entry.insert("", "adminjay")
+        self.admin_password_entry.insert("", "adminjay")
+        self.log_in()

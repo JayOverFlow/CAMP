@@ -56,7 +56,7 @@ class AdminDashboard(tk.Frame):
                         font=LEXAND_DECA_10,
                         rowheight=30)
 
-        self.dashboard_canvas = tk.Canvas(self, bg="#D9D9D9")
+        self.dashboard_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.dashboard_canvas.pack(fill=tk.BOTH, expand=True)
 
         student_card_path = IMAGES_DIR / "StudentQuantityCard.png"

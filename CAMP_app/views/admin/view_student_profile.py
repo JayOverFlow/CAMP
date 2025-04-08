@@ -84,7 +84,7 @@ class ViewStudentProfile(tk.Toplevel):
 
 
         # Full Name
-        self.header_frame_canvas.create_text(310, 100, text=student_data["stu_full_name"], fill="#8D0404", font=LEXEND_DECA_16)
+        self.header_frame_canvas.create_text(210, 100, text=student_data["stu_full_name"], fill="#8D0404", font=LEXEND_DECA_16, anchor="w")
 
         # ID
         self.header_frame_canvas.create_text(235, 120, text=f"AU{student_data["stu_id"]}", fill="#8D0404", font=LEXEND_DECA_10)

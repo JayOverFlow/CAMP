@@ -60,7 +60,7 @@ class AdminLanding(tk.Toplevel):
         self.sidebar.pack_propagate(False)
 
         # Canvas for sidebar
-        self.sidebar_canvas = tk.Canvas(self.sidebar, bg="#8D0404")
+        self.sidebar_canvas = tk.Canvas(self.sidebar, bg="#8D0404", bd=0, highlightthickness=0)
         self.sidebar_canvas.pack(fill=tk.BOTH, expand=True)
 
         # CAMP Logo
@@ -96,16 +96,16 @@ class AdminLanding(tk.Toplevel):
         }
 
         # Dashboard button tab
-        self.dashboard_btn = tk.Button(self.sidebar, width=134, height=70, borderwidth=0, image=self.button_images['AdminDashboard']['active'], command=lambda: self.display_frame("AdminDashboard"))
-        self.dashboard_btn.place(x=2, y=200)
+        self.dashboard_btn = tk.Button(self.sidebar, width=138, height=70, borderwidth=0, image=self.button_images['AdminDashboard']['active'], command=lambda: self.display_frame("AdminDashboard"))
+        self.dashboard_btn.place(x=0, y=200)
 
         # Faculty button tab
-        self.faculty_btn = tk.Button(self.sidebar, width=134, height=70, borderwidth=0, image=self.button_images['AdminFaculty']['inactive'], command=lambda: self.display_frame("AdminFaculty"))
-        self.faculty_btn.place(x=2, y=270)
+        self.faculty_btn = tk.Button(self.sidebar, width=138, height=70, borderwidth=0, image=self.button_images['AdminFaculty']['inactive'], command=lambda: self.display_frame("AdminFaculty"))
+        self.faculty_btn.place(x=0, y=270)
 
         # Courses button tab
-        self.courses_btn = tk.Button(self.sidebar, width=134, height=70, borderwidth=0, image=self.button_images['AdminCourses']['inactive'], command=lambda: self.display_frame("AdminCourses"))
-        self.courses_btn.place(x=2, y=340)
+        self.courses_btn = tk.Button(self.sidebar, width=138, height=70, borderwidth=0, image=self.button_images['AdminCourses']['inactive'], command=lambda: self.display_frame("AdminCourses"))
+        self.courses_btn.place(x=0, y=340)
 
         # Logout button
         logout_path = self.IMAGES_DIR / "LogOutButton.png"
@@ -120,7 +120,7 @@ class AdminLanding(tk.Toplevel):
     def load_image(self, filename):
         path = self.IMAGES_DIR / filename
         image = Image.open(path)
-        image = image.resize((136, 72), Image.Resampling.LANCZOS)
+        image = image.resize((142, 72), Image.Resampling.LANCZOS)
         return ImageTk.PhotoImage(image)
 
     def on_close(self):
