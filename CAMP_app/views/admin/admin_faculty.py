@@ -36,7 +36,7 @@ class AdminFaculty(tk.Frame):
         self.faculty_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Faculty Label
-        self.faculty_canvas.create_text(100, 50, text="Faculty", font=LEXEND_DECA_20, fill="#8D0404")
+        self.faculty_canvas.create_text(100, 50, text="Faculty", font=("Lexend Deca", 20, "bold"), fill="#8D0404")
 
         # Faculty List Frame
         self.fac_list_frame = tk.Frame(self, width=700, height=350, bg="#FBFBF9")
@@ -86,11 +86,9 @@ class AdminFaculty(tk.Frame):
                     print("No course found for this faculty.")
                     return
 
-                fac_students = self.main.admin_model.get_faculty_students(fac_id)
-
                 self.admin_landing.attributes("-disabled", True)  # Disable the interaction
                 self.admin_landing.wait_window(
-                    ViewFacultyStudents(self.admin_landing, self.main, fac_students, cou_id))  # Wait for the popup
+                    ViewFacultyStudents(self.admin_landing, self.main, fac_id, cou_id))  # Wait for the popup
                 self.admin_landing.attributes("-disabled", False)  # Re-enable the interaction
                 self.admin_landing.focus_force()  # Regain focus on the parent window
 
