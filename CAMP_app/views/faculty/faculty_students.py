@@ -68,15 +68,15 @@ class FacultyStudents(tk.Frame):
             height=15
         )
 
-        # Define column widths and alignments
-        self.student_list.column("index", anchor="center", width=40)
-        self.student_list.column("stu_full_name", anchor="center", width=200)
-        self.student_list.column("stu_id", anchor="center", width=120)
-
         # Dummy headings to satisfy Treeview internals
         self.student_list.heading("index", text="")
         self.student_list.heading("stu_full_name", text="")
         self.student_list.heading("stu_id", text="")
+
+        # Define column widths and alignments
+        self.student_list.column("index", anchor="center", width=40)
+        self.student_list.column("stu_full_name", anchor="center", width=200)
+        self.student_list.column("stu_id", anchor="center", width=120)
 
         # Tag style for row font
         self.student_list.tag_configure("row", font=row_font)

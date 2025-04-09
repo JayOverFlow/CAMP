@@ -3,10 +3,10 @@ from tkinter import ttk, messagebox
 
 
 class ViewFacultyStudents(tk.Toplevel):
-    def __init__(self, parent, main, fac_students, cou_id): # parent is the AdminDashboard
+    def __init__(self, parent, main, fac_id, cou_id): # parent is the AdminDashboard
         super().__init__(parent)
         self.main = main
-        self.fac_students = fac_students
+        self.fac_id = fac_id
         self.cou_id = cou_id
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -38,11 +38,12 @@ class ViewFacultyStudents(tk.Toplevel):
         self.faculty_stu_list.place(x=50, y=100)
         self.faculty_stu_list.bind("<ButtonRelease-1>", self.remove_student)
 
-        self.display_faculty_students(self.fac_students)
+        self.display_faculty_students()
 
-    def display_faculty_students(self, students):
+    def display_faculty_students(self):
+        fac_students = self.main.admin_model.get_faculty_students(self.fac_id)
         count = 1
-        for student in students:
+        for student in fac_students:
             self.faculty_stu_list.insert("", "end", values=(count, student["stu_full_name"], f"AU{student["stu_id"]}", "Remove"))
             count+=1
 
@@ -60,10 +61,16 @@ class ViewFacultyStudents(tk.Toplevel):
                 if confirm:
                     result = self.main.admin_model.remove_faculty_student(self.cou_id, stu_id)
                     if result:
-                        messagebox.showinfo("Success", "Student successfully removed.")
                         self.faculty_stu_list.delete(selected_row)
+                        messagebox.showinfo("Success", "Student successfully removed.")
+                        self.refresh_fac_stu_list()
                     else:
                         messagebox.showerror("Error", "Failed to remove student.")
+
+    def refresh_fac_stu_list(self):
+        for row in self.faculty_stu_list.get_children():
+            self.faculty_stu_list.delete(row)
+        self.display_faculty_students()
 
     def on_close(self):
         self.destroy()

@@ -35,27 +35,6 @@ class AdminDashboard(tk.Frame):
         except Exception as e:
             print(f"Error loading font: {e}")
 
-        style = ttk.Style()
-        style.theme_use("default")
-
-        # Configure the Scrollbar style
-        style.configure("Custom.Vertical.TScrollbar",
-                        troughcolor="#D3D3D3",  # Background track color
-                        background="#8D0404",  # Scrollbar color
-                        arrowcolor="#FFFFFF",  # Arrow color
-                        bordercolor="#8D0404",  # Border color
-                        gripcount=0,  # Hide grip lines
-                        relief="flat",  # Flat style
-                        width=15)  # Width of the scrollbar
-        style.configure("Custom.Treeview.Heading",
-                        background="#8D0404",
-                        foreground="white",
-                        font=LEXAND_DECA_12,
-                        padding=(5,5,5,5))
-        style.configure("Custom.Treeview",
-                        font=LEXAND_DECA_10,
-                        rowheight=30)
-
         self.dashboard_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.dashboard_canvas.pack(fill=tk.BOTH, expand=True)
 
@@ -63,64 +42,121 @@ class AdminDashboard(tk.Frame):
         student_card = Image.open(student_card_path)
         student_card = student_card.resize((350, 200), Image.Resampling.LANCZOS)
         self.student_card = ImageTk.PhotoImage(student_card)
-        self.dashboard_canvas.create_image(30, 50, image=self.student_card, anchor=tk.NW)
+        self.dashboard_canvas.create_image(30, 30, image=self.student_card, anchor=tk.NW)
 
         faculty_card_path = IMAGES_DIR / "FacultyQuantityCard.png"
         faculty_card = Image.open(faculty_card_path)
         faculty_card = faculty_card.resize((350, 200), Image.Resampling.LANCZOS)
         self.faculty_card = ImageTk.PhotoImage(faculty_card)
-        self.dashboard_canvas.create_image(440, 50, image=self.faculty_card, anchor=tk.NW)
+        self.dashboard_canvas.create_image(440, 30, image=self.faculty_card, anchor=tk.NW)
 
         # Student count
-        self.dashboard_canvas.create_text(240,90, text=self.display_student_count(), font=LEXAND_DECA_40 ,fill="#000000",  anchor=tk.NW)
-
+        self.dashboard_canvas.create_text(235,55, text=self.display_student_count(), font=("Lexend Deca", 40, "bold") ,fill="#000000",  anchor=tk.NW)
 
         # Female count
-        self.dashboard_canvas.create_text(125, 203, text=self.display_female_count(), font=LEXAND_DECA_18 ,fill="#000000", anchor=tk.NW)
+        self.dashboard_canvas.create_text(120, 180, text=self.display_female_count(), font=("Lexend Deca", 18, "bold") ,fill="#000000", anchor=tk.NW)
 
         # Male count
-        self.dashboard_canvas.create_text(280, 203, text=self.display_male_count(), font=LEXAND_DECA_18 ,fill="#000000", anchor=tk.NW)
+        self.dashboard_canvas.create_text(280, 180, text=self.display_male_count(), font=("Lexend Deca", 18, "bold") ,fill="#000000", anchor=tk.NW)
 
         # Faculty count
-        self.dashboard_canvas.create_text(660, 120, text=self.display_faculty_count(), font=LEXAND_DECA_40,fill="#000000", anchor=tk.NW)
+        self.dashboard_canvas.create_text(645, 100, text=self.display_faculty_count(), font=("Lexend Deca", 40, "bold"),fill="#000000", anchor=tk.NW)
 
         # Admit student button
-        self.enroll_btn = tk.Button(self.dashboard_canvas, text="+  Admit Student", command=lambda: self.admit_student(), font=LEXAND_DECA_10, anchor=tk.NW, bg="#8D0404", fg="#FFFFFF", padx=5, pady=5)
-        self.enroll_btn.place(x=420, y=300)
+        self.admit_btn = tk.Button(
+            self,
+            text="+ Admit Student",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 8, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=lambda: self.admit_student()
+        )
+        self.admit_btn.place(x=444, y=250)
 
         # Search bar
         self.search_var = tk.StringVar()  # Variable to store the entry string
-        self.search_entry = tk.Entry(self.dashboard_canvas, textvariable=self.search_var, width=39)
-        self.search_entry.insert(0, "Search by Name or ID")  # Initial as placeholder
+        self.search_entry = tk.Entry(
+            self,
+            textvariable=self.search_var,
+            width=28,
+            bg="#f0f0f0",  # Light gray background
+            fg="#020202",  # Black text
+            relief="flat",  # Flat border for modern look
+            highlightthickness=1,  # Thin outline
+            highlightbackground="#8D0404",  # Border color (unfocused)
+            highlightcolor="#020202",  # Border color (focused)
+            insertbackground="#020202",  # Cursor color
+            font=("Lexend Deca", 8)  # Custom font for consistency
+        )
+        self.search_entry.place(x=550,y=250, anchor=tk.NW, height=30)
 
+        # Search Icon
+        search_path = IMAGES_DIR / "SearchIcon.png"
+        search_icon = Image.open(search_path)
+        search_icon = search_icon.resize((30, 30), Image.Resampling.LANCZOS)
+        self.search_icon = ImageTk.PhotoImage(search_icon)
+        self.dashboard_canvas.create_image(754, 250, image=self.search_icon, anchor=tk.NW)
+
+        self.search_entry.insert(0, "Search by Name or ID")  # Initial as placeholder
         # Handle focus for placeholder
         self.search_entry.bind("<FocusIn>", self.toggle_placeholder)
         self.search_entry.bind("<FocusOut>", self.toggle_placeholder)
-        self.search_entry.place(x=550,y=300, anchor=tk.NW, height=35)
         self.search_entry.bind("<KeyRelease>", self.filter_students)  # Filter students for live searching
 
-        self.student_list_frame = tk.Frame(self.dashboard_canvas, width=750, height=250)
-        self.student_list_frame.place(x=35, y=350, anchor=tk.NW)
-
-
         # Student list
-        self.student_list = ttk.Treeview(self.student_list_frame, columns=("stu_full_name", "stu_id", "view_profile"),
-                                         show="headings", style="Custom.Treeview", height=6)
-        self.student_list.heading("stu_full_name", text="Full Name", anchor="center", )
-        self.student_list.heading("stu_id", text="Student ID", anchor="center")
-        self.student_list.heading("view_profile", text="", anchor="center")
+        self.dashboard_canvas.create_text(30, 246, text="Student List", font=("Lexend Deca", 20, "bold"),
+                                          fill="#8D0404", anchor=tk.NW)
+
+        header_font = font.Font(family="Lexend Deca", size=10, weight="bold")
+        row_font = font.Font(family="Lexend Deca", size=8)
+
+        # Fake styled header (red background, white text)
+        header_frame = tk.Frame(self, bg="#8D0404", width=756, height=30)
+        header_frame.place(x=30,y=290)
+        header_frame.pack_propagate(False)
+
+        tk.Label(header_frame, text="Student Name", fg="#FFFFFF", bg="#8D0404",
+                 font=header_font, width=34, anchor="center").pack(side="left", padx=0)
+        tk.Label(header_frame, text="Student ID", fg="#FFFFFF", bg="#8D0404",
+                 font=header_font, width=20, anchor="center").pack(side="left", padx=0)
+        tk.Label(header_frame, text="", fg="#FFFFFF", bg="#8D0404",
+                 font=header_font, width=28, anchor="center").pack(side="left", padx=0)
+
+        self.student_list = ttk.Treeview(
+            self,
+            columns=("stu_full_name", "stu_id", "view_profile"),
+            show="headings",
+            height=13
+        )
+
+        # Dummy headings
+        self.student_list.heading("stu_full_name", text="" )
+        self.student_list.heading("stu_id", text="")
+        self.student_list.heading("view_profile", text="")
+
+        # Define columns
         self.student_list.column("stu_full_name", anchor="center", width=300)
-        self.student_list.column("stu_id", anchor="center", width=200)
+        self.student_list.column("stu_id", anchor="center", width=204)
         self.student_list.column("view_profile", anchor="center", width=250)
 
-        self.scrollbar = ttk.Scrollbar(self.student_list_frame, orient="vertical", command=self.student_list.yview)
-        self.student_list.configure(yscrollcommand=self.scrollbar.set)
+        self.student_list.tag_configure("row", font=row_font)
 
-        # self.display_students()
-        self.display_data() # Display all data
-        self.student_list.pack(side="left", fill="both", expand=True)
+        self.student_list.place(x=30,y=302)
+        header_frame.lift()
         self.student_list.bind("<ButtonRelease-1>", self.view_profile)  # When the user clicked the "View Profile"
-        self.scrollbar.pack(side="right", fill="y")
+
+        # NOTE: Take this back
+        # self.scrollbar = ttk.Scrollbar(self.student_list_frame, orient="vertical", command=self.student_list.yview)
+        # self.student_list.configure(yscrollcommand=self.scrollbar.set)
+
+        self.display_students()
+        self.display_data() # Display all data
+        # self.student_list.pack(side="left", fill="both", expand=True)
+        # self.scrollbar.pack(side="right", fill="y") # NOTE: Take this bac
 
 
     def display_data(self):
@@ -163,7 +199,7 @@ class AdminDashboard(tk.Frame):
         # Clear and display
         self.student_list.delete(*self.student_list.get_children())
         for student in students:
-            self.student_list.insert("", "end", values=(student["stu_full_name"], f"AU{student["stu_id"]}", "View Profile"))
+            self.student_list.insert("", "end", values=(student["stu_full_name"], f"AU{student["stu_id"]}", "View Profile"), tags=("row",))
 
     def filter_students(self, event=None):
         search_text = self.search_var.get().lower() # Get the user input
