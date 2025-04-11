@@ -1,38 +1,19 @@
 import tkinter as tk
-import customtkinter as ctk
-import ctypes
-from tkinter import ttk, messagebox, font
+from tkinter import messagebox, font
 from tkcalendar import DateEntry
-from pathlib import Path
+from datetime import datetime
 
 
 
 class AdmitStudent(tk.Toplevel):
-    def __init__(self, main, parent): # parent is the AdminDashboard
+    def __init__(self, main, parent):
         super().__init__(parent)
         self.main = main
         self.admin_dashboard = parent
 
         self.title("Admit Student")
-        self.geometry("800x495+240+70")
+        self.geometry("932x320+155+180")
         self.resizable(False, False)
-        BASE_DIR = Path(__file__).resolve().parent.parent
-
-        IMAGES_DIR = BASE_DIR / "static/images"
-
-        FONTS_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
-        # Font sizes
-        LEXEND_DECA_8 = font.Font(family="Lexend Deca", size=8)
-        LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
-        LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
-        LEXEND_DECA_16 = font.Font(family="Lexend Deca", size=16)
-        LEXEND_DECA_18 = font.Font(family="Lexend Deca", size=18)
-        LEXEND_DECA_20 = font.Font(family="Lexend Deca", size=20)
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
 
         self.main_frame = tk.Frame(self)
         self.main_frame.pack(fill="both", expand=True)
@@ -50,217 +31,424 @@ class AdmitStudent(tk.Toplevel):
             "Religion": 70,
             "Address": 150,
         }
+        
+        lbl_font = font.Font(family="Lexend Deca", size=10, weight="bold")
+        entry_font = font.Font(family="Lexend Deca", size=8)
+
+        # Header
+        tk.Label(self.main_frame, text="Student Admission Form", font=("Lexend Deca", 20, "bold"), fg="#FFFFFF", bg="#8D0404").pack(fill="x", expand=True, anchor="nw")
+
 
         # First name
-        self.first_name_lbl = ctk.CTkLabel(self.main_frame, text="First Name", font=("Lexand Deca", 11, "bold"), text_color="#8D0404", anchor="e", height=20)
-        self.first_name_lbl.place(x=50, y=18)
-        self.first_name = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
-        self.first_name.place(x=50, y=35)
+        tk.Label(self.main_frame, text="First Name", font=lbl_font, fg="#020202").place(x=20, y=55)
+        self.first_name = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",  # Black text
+            relief="flat",  # Flat border for modern look
+            highlightthickness=1,  # Thin outline
+            highlightbackground="#020202",  # Border color (unfocused)
+            highlightcolor="#8D0404",  # Border color (focused)
+            insertbackground="#020202",  # Cursor color
+            font=entry_font,
+        )
+        self.first_name.place(x=22, y=78)
 
         # Middle name
-        self.middle_name_lbl = ctk.CTkLabel(self.main_frame, text="Middle Name", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.middle_name_lbl.place(x=50, y=71)
-        self.middle_name = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
-        self.middle_name.place(x=50, y=93)
+        tk.Label(self.main_frame, text="Middle Name", font=lbl_font, fg="#020202").place(x=20, y=108)
+        self.middle_name = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.middle_name.place(x=22, y=131)
 
         # Last name
-        self.last_name_lbl = ctk.CTkLabel(self.main_frame, text="Last Name", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.last_name_lbl.place(x=50, y=128)
-        self.last_name = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
-        self.last_name.place(x=50, y=148)
+        tk.Label(self.main_frame, text="Last Name", font=lbl_font, fg="#020202").place(x=20, y=161)
+        self.last_name = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.last_name.place(x=22, y=184)
 
         # Sex
-        self.sex_lbl = ctk.CTkLabel(self.main_frame, text="Sex", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.sex_lbl.place(x=50, y=185)
-        self.sex_var = tk.StringVar(value="Select")  # Set placeholder value
-        self.sex_dropdown = ttk.Combobox(self.main_frame, textvariable=self.sex_var, values=["Female", "Male"], state="readonly" , width=50)
-        self.sex_dropdown.place(x=50, y=208)
+        sex_lbl = tk.Label(self.main_frame, text="Sex", font=lbl_font, fg="#020202")
+        sex_lbl.place(x=20, y=214)
+        sex_lbl.lower()
+        self.sex_var = tk.StringVar()
+        self.sex_var.set("Select \u25BE")
+        self.sex_dropdown = tk.OptionMenu(self.main_frame, self.sex_var, "Female", "Male")
 
-        # Address
-        self.address_lbl = ctk.CTkLabel(self.main_frame, text="Address", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.address_lbl.place(x=50, y=252)
-        self.address = ctk.CTkTextbox(self.main_frame, height=90, width=320, corner_radius=0, border_width=1)
-        self.address.place(x=50, y=272)
+        # Dropdown design
+        self.sex_dropdown.config(
+            font=("Lexend Deca", 5, "bold"),
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#E0E0E0",
+            activeforeground="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            bd=1,
+            padx=14,
+        )
 
-        # Citizenship
-        self.citizenship_lbl = ctk.CTkLabel(self.main_frame, text="Citizenship", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.citizenship_lbl.place(x=420, y=15)
-        self.citizenship = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
-        self.citizenship.place(x=420, y=35)
-
-        # LRN
-        self.lrn_lbl = ctk.CTkLabel(self.main_frame, text="LRN", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.lrn_lbl.place(x=420, y=71)
-        self.lrn = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
-        self.lrn.place(x=420, y=93)
-
-        # Phone
-        self.phone_lbl = ctk.CTkLabel(self.main_frame, text="Phone", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.phone_lbl.place(x=420, y=128)
-        self.phone = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
-        self.phone.place(x=420, y=148)
-
-        # Email
-        self.email_lbl = ctk.CTkLabel(self.main_frame, text="Email", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.email_lbl.place(x=420, y=185)
-        self.email = ctk.CTkEntry(self.main_frame, width=320, height=32, corner_radius=0, border_width=1)
-        self.email.place(x=420, y=208)
+        menu = self.sex_dropdown["menu"]
+        menu.config(
+            font=entry_font,
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#8D0404",
+            activeforeground="#FFFFFF",
+            bd=0,
+            tearoff=0
+        )
+        self.sex_dropdown.place(x=22, y=238)
+        self.sex_dropdown.lift()
 
         # Birthdate
-        self.birthdate_lbl = ctk.CTkLabel(self.main_frame, text="Birthdate", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.birthdate_lbl.place(x=420, y=252)
-        self.birthdate = DateEntry(self.main_frame, width=22, height=40, background="darkblue", foreground="white", date_pattern="yyyy-mm-dd")
-        self.birthdate.place(x=420, y=272)
+        tk.Label(self.main_frame, text="Birthdate", font=lbl_font, fg="#020202").place(x=120, y=214)
+
+        self.birthdate = DateEntry(
+            self.main_frame,
+            width=10,
+            background="#8D0404",
+            foreground="#FFFFFF",
+            borderwidth=0,
+            date_pattern="yyyy-mm-dd",
+            headersbackground="#8D0404",
+            headersforeground="#FFFFFF",
+            selectbackground="#8D0404",
+            selectforeground="#FFFFFF",
+            normalbackground="#FFFFFF",
+            normalforeground="#333333",
+            weekendbackground="#F5F5F5",
+            weekendforeground="#8D0404",
+            font=("Lexend Deca", 8),
+        )
+        self.birthdate.place(x=122, y=238)
         self.birthdate.delete(0, tk.END)
 
-        # Religion
-        self.religion_lbl = ctk.CTkLabel(self.main_frame, text="Religion", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.religion_lbl.place(x=590, y=252)
-        self.religion = ctk.CTkEntry(self.main_frame, width=150, height=32, corner_radius=0, border_width=1)
-        self.religion.place(x=590, y=272)
+        # Citizenship
+        tk.Label(self.main_frame, text="Citizenship", font=lbl_font, fg="#020202").place(x=250, y=55)
+        self.citizenship = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.citizenship.place(x=252, y=78)
+
+        # LRN
+        tk.Label(self.main_frame, text="LRN", font=lbl_font, fg="#020202").place(x=250, y=108)
+        self.lrn = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.lrn.place(x=252, y=131)
+
+        # Phone
+        tk.Label(self.main_frame, text="Phone Number", font=lbl_font, fg="#020202").place(x=250, y=161)
+        self.phone = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.phone.place(x=252, y=184)
+
+        # Email
+        tk.Label(self.main_frame, text="Email", font=lbl_font, fg="#020202").place(x=250, y=214)
+        self.email = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.email.place(x=252, y=237)
 
         # Username
-        self.username_lbl = ctk.CTkLabel(self.main_frame, text="Username", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.username_lbl.place(x=420, y=309)
-        self.username = ctk.CTkEntry(self.main_frame, width=150, height=32, corner_radius=0, border_width=1)
-        self.username.place(x=420, y=330)
+        tk.Label(self.main_frame, text="Username", font=lbl_font, fg="#020202").place(x=480, y=55)
+        self.username = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.username.place(x=482, y=78)
+
+        # Religion
+        tk.Label(self.main_frame, text="Religion", font=lbl_font, fg="#020202").place(x=710, y=55)
+        self.religion = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.religion.place(x=712, y=78)
 
         # Password
-        self.password_lbl = ctk.CTkLabel(self.main_frame, text="Password", font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.password_lbl.place(x=590, y=309)
-        self.password = ctk.CTkEntry(self.main_frame, show="*", width=150, height=32, corner_radius=0, border_width=1)
-        self.password.place(x=590, y=330)
+        tk.Label(self.main_frame, text="Password", font=lbl_font, fg="#020202").place(x=480, y=108)
+        self.password = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.password.place(x=482, y=131)
 
         # Confirm Password
-        self.confirm_password_lbl = ctk.CTkLabel(self.main_frame, text="Confirm Password",font=("Lexand Deca", 11, "bold"), text_color="#8D0404")
-        self.confirm_password_lbl.place(x=590, y=370)
-        self.confirm_password = ctk.CTkEntry(self.main_frame, show="*", corner_radius=0, border_width=1, width=150, height=32)
-        self.confirm_password.place(x=590, y=390)
+        tk.Label(self.main_frame, text="Confirm Password", font=lbl_font, fg="#020202").place(x=710, y=108)
+        self.confirm_password = tk.Entry(
+            self,
+            width=28,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.confirm_password.place(x=712, y=131)
 
-        self.admit_btn = ctk.CTkButton(self.main_frame, text="Enroll Student", command=self.validate_fields,fg_color="#8D0404", hover_color="#8D0404", corner_radius=10, width=150)
-        self.admit_btn.place(x=590, y=440)
+        # Address
+        tk.Label(self.main_frame, text="Address", font=lbl_font, fg="#020202").place(x=480, y=161)
+        self.address = tk.Text(
+            self.main_frame,
+            width=61,
+            height=4.48,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font
+        )
+        self.address.place(x=482, y=184)
 
-        self.close_btn = ctk.CTkButton(self.main_frame, text="Close", command=self.close, fg_color="#8D0404", hover_color="#8D0404", corner_radius=10)
-        self.close_btn.place(x=430, y=440)
+        # Admit Button
+        self.admit_btn = tk.Button(
+            self.main_frame,
+            width=14,
+            text="Admit Student",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 8, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=self.validate_student_admission
+        )
+        self.admit_btn.place(x=810, y=274)
+        self.admit_btn.bind("<Enter>", lambda e: self.admit_btn_hover_effect(e, True))
+        self.admit_btn.bind("<Leave>", lambda e: self.admit_btn_hover_effect(e, False))
 
-    def validate_fields(self):
-        middle_name = None
+        # Close Button
+        self.close_btn = tk.Button(
+            self.main_frame,
+            width= 14,
+            text="Close",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 8, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=self.close
+        )
+        self.close_btn.place(x=675, y=274)
+        self.close_btn.bind("<Enter>", lambda e: self.close_btn_hover_effect(e, True))
+        self.close_btn.bind("<Leave>", lambda e: self.close_btn_hover_effect(e, False))
 
+    def close_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.close_btn.config(background=new_color)
+
+    def admit_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.admit_btn.config(background=new_color)
+
+    def validate_student_admission(self):
         errors = []
-
-        # For First Name
-        first_name = self.first_name.get().strip()
-        if len(first_name) > self.fields_max_length["First Name"]:
-            errors.append(f"First Name exceeds {self.fields_max_length['First Name']} characters.")
-        elif not first_name:
-            errors.append("First Name cannot be empty.")
-
-        # For Last Name
-        last_name = self.last_name.get().strip()
-        if len(last_name) > self.fields_max_length["Last Name"]:
-            errors.append(f"Last Name exceeds {self.fields_max_length['Last Name']} characters.")
-        elif not last_name:
-            errors.append("Last Name cannot be empty.")
-
-        # For Sex Field
-        sex = self.sex_var.get()
-        if sex == "Select":
-            errors.append("Sex field is required.")
-
-        # For Address
-        address = self.address.get("1.0", "end-1c")
-        if len(address) > self.fields_max_length["Address"]:
-            errors.append(f"Address exceeds {self.fields_max_length['Address']} characters.")
-        elif len(address) == 0:
-            errors.append("Address cannot be empty.")
-
-        # For Citizenship
-        citizenship = self.citizenship.get().strip()
-        if len(citizenship) > self.fields_max_length["Citizenship"]:
-            errors.append(f"Citizenship exceeds {self.fields_max_length['Citizenship']} characters.")
-        elif not citizenship:
-            errors.append("Citizenship cannot be empty.")
-
-        # For LRN
-        lrn = self.lrn.get().strip()
-        if len(lrn) > self.fields_max_length["LRN"] or len(lrn) < 12 :
-            errors.append("LRN must be 12 digits.")
-        elif not lrn:
-            errors.append("LRN cannot be empty.")
-        elif not lrn.isdigit():
-            errors.append("LRN must be a pure digits.")
-
-        # For Phone
-        phone = self.phone.get().strip()
-        if phone:
-            if not phone.isdigit():
-                errors.append("Phone must contain only digits.")
-            elif len(phone) != 11:
-                errors.append("Phone must be exactly 11 digits.")
-
-        # For Email
-        email = self.email.get().strip()
         email_domains = ("@email.com", "@gmail.com", "@yahoo.com", "@mail.com")
-        if len(email) > self.fields_max_length["Email"]:
-            errors.append(f"Email exceeds {self.fields_max_length['Email']} characters.")
-        elif not email:
-            errors.append("Email cannot be empty.")
-        elif not any(email.endswith(domain) for domain in email_domains):
+
+        # Collect all field values into a dictionary
+        data = {
+            "First Name": self.first_name.get().strip(),
+            "Middle Name": self.middle_name.get().strip(),  # Optional
+            "Last Name": self.last_name.get().strip(),
+            "Sex": self.sex_var.get(),
+            "Address": self.address.get("1.0", tk.END).strip(),
+            "Citizenship": self.citizenship.get().strip(),
+            "LRN": self.lrn.get().strip(),
+            "Phone": self.phone.get().strip(),
+            "Email": self.email.get().strip(),
+            "Birthdate": self.birthdate.get().strip(),
+            "Religion": self.religion.get().strip(),
+            "Username": self.username.get().strip(),
+            "Password": self.password.get().strip(),
+            "Confirm Password": self.confirm_password.get().strip(),
+        }
+
+        # Check if all fields except Middle Name are empty
+        if all(not value for key, value in data.items() if key != "Middle Name"):
+            messagebox.showerror("Input Error", "All fields can't be empty (Except Middle Name)")
+            return
+
+        # Check if any required field is empty (excluding Middle Name)
+        if any(not value for key, value in data.items() if key != "Middle Name"):
+            messagebox.showerror("Input Error", "Fields cannot be empty (Except Middle Name)")
+            return
+
+        # Check for max length violations
+        for field, value in data.items():
+            if field in self.fields_max_length and len(value) > self.fields_max_length[field]:
+                errors.append(f"{field} exceeds {self.fields_max_length[field]} characters.")
+
+        # Specific validations
+        lrn = data["LRN"]
+        if lrn and (not lrn.isdigit() or len(lrn) != 12):
+            errors.append("LRN must be exactly 12 digits and contain only numbers.")
+
+        phone = data["Phone"]
+        if phone and (not phone.isdigit() or len(phone) != 11):
+            errors.append("Phone must be exactly 11 digits and contain only numbers.")
+
+        email = data["Email"]
+        if email and not any(email.endswith(domain) for domain in email_domains):
             errors.append(f"Email must end with {', '.join(email_domains)}")
 
-        # For Birthdate (required)
-        birth_date = self.birthdate.get().strip()
-        if not birth_date:
-            errors.append("Birthdate is required.")
-
-        # For Religion
-        religion = self.religion.get().strip()
-        if len(religion) > self.fields_max_length["Religion"]:
-            errors.append(f"Religion exceeds {self.fields_max_length['Religion']} characters.")
-        elif not religion:
-            errors.append("Religion cannot be empty.")
-
-        # For Username
-        username = self.username.get().strip()
-        if len(username) > self.fields_max_length["Username"]:
-            errors.append(f"Username exceeds {self.fields_max_length['Username']} characters.")
-        elif not username:
-            errors.append("Username cannot be empty.")
-        elif self.main.admin_model.is_student_username_taken(self.username.get().strip().strip()):
-            errors.append("Username is already taken.") # NOTE: Remove comment
-
-        # For Password
-        password = self.password.get().strip()
-        confirm_password = self.confirm_password.get().strip()
-        if len(password) > self.fields_max_length["Password"]:
-            errors.append(f"Password exceeds {self.fields_max_length['Password']} characters.")
+        password = data["Password"]
+        confirm_password = data["Confirm Password"]
+        if password != confirm_password:
+            errors.append("Passwords do not match.")
         elif len(password) < 8:
             errors.append("Password must be at least 8 characters.")
-        elif not password:
-            errors.append("Password cannot be empty.")
-        elif password != confirm_password:
-            errors.append("Passwords do not match.")
 
-        # If errors exist, show messagebox
+        if data["Sex"] == "Select ▾":
+            errors.append("Sex field is required.")
+
+        # Username uniqueness check
+        if self.main.admin_model.is_student_username_taken(data["Username"]):
+            errors.append("Username is already taken.")
+
+        # Birthdate age check (must be 18+)
+        try:
+            birth_date = datetime.strptime(data["Birthdate"], "%Y-%m-%d")
+            today = datetime.today()
+            age = (today - birth_date).days // 365
+            if age < 18:
+                errors.append("Student must be at least 18 years old.")
+        except ValueError:
+            errors.append("Invalid birthdate format. Use YYYY-MM-DD.")
+
+        # Show errors or continue with admission
         if errors:
             messagebox.showerror("Input Error", "\n".join(errors))
         else:
-            self.enroll_student(first_name, middle_name, last_name, birth_date, sex, username, password, phone, lrn, citizenship, email, religion, address)
-            messagebox.showinfo("Success", "Student enrolled successfully!")
-            self.close()
+            self.admit_student(
+                data["First Name"],
+                data["Middle Name"],
+                data["Last Name"],
+                data["Birthdate"],
+                data["Sex"],
+                data["Username"],
+                data["Password"],
+                data["Phone"],
+                data["LRN"],
+                data["Citizenship"],
+                data["Email"],
+                data["Religion"],
+                data["Address"],
+            )
+            messagebox.showinfo("Success", "Student admitted successfully!")
+            self.clear_fields()
 
-    def enroll_student(self, first_name, middle_name, last_name,birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address):
+    def admit_student(self, first_name, middle_name, last_name, birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address):
         self.main.admin_model.admit_student(first_name, middle_name, last_name, birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address)
-        self.admin_dashboard.display_students() # Refresh the admin dashboard student list
+        self.admin_dashboard.display_students()
+
+    def clear_fields(self):
+        self.first_name.delete(0, tk.END)
+        self.middle_name.delete(0, tk.END)
+        self.last_name.delete(0, tk.END)
+        self.sex_var.set("Select ▾")  # Reset to default option
+        self.address.delete("1.0", tk.END)
+        self.citizenship.delete(0, tk.END)
+        self.lrn.delete(0, tk.END)
+        self.phone.delete(0, tk.END)
+        self.email.delete(0, tk.END)
+        self.birthdate.delete(0, tk.END)
+        self.religion.delete(0, tk.END)
+        self.username.delete(0, tk.END)
+        self.password.delete(0, tk.END)
+        self.confirm_password.delete(0, tk.END)
 
     def close(self):
         self.destroy()
-
-# Directly run the class for UI viewing
-if __name__ == "__main__":
-    import sys
-    root = tk.Tk()
-    root.withdraw()  # Hide the root window
-    test_app = AdmitStudent(None, None)  # Create the Toplevel window
-    test_app.mainloop()
-    sys.exit()

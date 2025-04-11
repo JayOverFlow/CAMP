@@ -122,6 +122,25 @@ class AdminModel:
         finally:
             conn.close()
 
+    def is_faculty_username_taken(self, username):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor()
+            query = "SELECT * FROM faculty_tbl WHERE fac_username = %s"
+            cursor.execute(query, (username,))
+            result = cursor.fetchone()
+            cursor.close()
+            return result
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()
+
     def is_student_username_taken(self, username):
         conn = self.db.get_connection()
 
@@ -141,7 +160,7 @@ class AdminModel:
         finally:
             conn.close()
 
-    def enroll_student(self, first_name, middle_name, last_name,birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address):
+    def admit_student(self, first_name, middle_name, last_name,birth_date, sex, username, password, phone_number, lrn, citizenship, email, religion, address):
         conn = self.db.get_connection()
 
         if not conn:
@@ -269,9 +288,9 @@ class AdminModel:
             cursor = conn.cursor(dictionary=True)
             query = "SELECT DISTINCT s.stu_id, s.stu_full_name FROM apply_tbl a JOIN student_tbl s ON a.stu_id_fk = s.stu_id JOIN course_tbl c ON a.cou_id_fk = c.cou_id JOIN faculty_tbl f ON c.fac_id_fk = f.fac_id WHERE f.fac_id = %s"
             cursor.execute(query, (fac_id,))
-            result = cursor.fetchall()
+            fac_students = cursor.fetchall()
             cursor.close()
-            return result
+            return fac_students
         except mysql.connector.Error as error:
             print(error)
             return None
@@ -310,10 +329,10 @@ class AdminModel:
             if cursor.rowcount > 0:
                 conn.commit()
                 cursor.close()
-                print("Student Expelled")
+                print("Student removed")
                 return True
             else:
-                print("Student was not expelled")
+                print("Student was not removed")
                 conn.rollback()
         except mysql.connector.Error as error:
             print(error)

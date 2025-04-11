@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, font
 import re
 
 
@@ -8,108 +8,249 @@ class AddCourse(tk.Toplevel):
         super().__init__(parent)
         self.main = main
         self.admin_courses = admin_courses
-        self.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.protocol("WM_DELETE_WINDOW", self.close)
 
         self.title("Add Course")
-        self.geometry("600x220+350+230")
+        self.geometry("510x190+400+230")
         self.resizable(False, False)
 
         # Main frame
-        self.main_frame = tk.Frame(self, bg="#FBFBF9")
+        self.main_frame = tk.Frame(self)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Fields Header
-        self.fields_header = tk.Label(self.main_frame, text="ADD COURSE", fg="#FFFFFF", bg="#8D0404",
-                                      anchor="w", font=("Arial", 14, "bold"), padx=20, pady=10)
-        self.fields_header.pack(fill=tk.X)
+        # Header
+        tk.Label(self.main_frame, text="Add Course", font=("Lexend Deca", 20, "bold"), fg="#FFFFFF",
+                 bg="#8D0404").pack(fill="x", expand=True, anchor="nw")
 
-        # Fields Frame using Grid
-        self.fields_frame = tk.Frame(self.main_frame, bg="#FBFBF9")
-        self.fields_frame.pack(padx=20, pady=20, fill=tk.BOTH, expand=True)
+        lbl_font = font.Font(family="Lexend Deca", size=10, weight="bold")
+        entry_font = font.Font(family="Lexend Deca", size=8)
 
-        # Style Settings
-        label_style = {"fg": "#8D0404", "bg": "#FBFBF9"}
-        entry_style = {"width": 25}
+        # Course Name
+        tk.Label(self.main_frame, text="Course Name", font=lbl_font, fg="#020202").place(x=20, y=62)
+        self.course_name = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",  # Black text
+            relief="flat",  # Flat border for modern look
+            highlightthickness=1,  # Thin outline
+            highlightbackground="#020202",  # Border color (unfocused)
+            highlightcolor="#8D0404",  # Border color (focused)
+            insertbackground="#020202",  # Cursor color
+            font=entry_font,
+        )
+        self.course_name.place(x=120, y=65)
 
-        # Function to simplify label and field creation
-        def create_label_field(label_text, row, column, widget_type="entry", options=[]):
-            label = tk.Label(self.fields_frame, text=label_text, **label_style)
-            label.grid(row=row, column=column * 2, padx=10, pady=10, sticky="w")
+        # Professor
+        prof_names = self.main.admin_model.get_unassigned_faculties()
+        prof_lbl = tk.Label(self.main_frame, text="Professor", font=lbl_font, fg="#020202")
+        prof_lbl.place(x=20, y=106)
 
-            if widget_type == "entry":
-                field = tk.Entry(self.fields_frame, **entry_style)
-            elif widget_type == "dropdown":
-                field = ttk.Combobox(self.fields_frame, values=options, state="readonly")
-                field.set("Select " + label_text)
-            field.grid(row=row, column=column * 2 + 1, padx=10, pady=10, sticky="ew")
-            return field
+        self.professor_var = tk.StringVar()
+        self.professor_var.set("Select Professor \u25BE")
+        self.professor_dropdown = tk.OptionMenu(
+            self.main_frame,
+            self.professor_var,
+            *prof_names
+        )
 
-        # Options from database
+        # Dropdown design
+        self.professor_dropdown.config(
+            font=("Lexend Deca", 5, "bold"),
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#E0E0E0",
+            activeforeground="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            bd=1,
+            padx=41,
+        )
+
+        menu = self.professor_dropdown["menu"]
+        menu.config(
+            font=entry_font,
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#8D0404",
+            activeforeground="#FFFFFF",
+            bd=0,
+            tearoff=0
+        )
+        self.professor_dropdown.place(x=120, y=110)
+
+        # Day
         days_of_week = self.main.admin_model.get_schedule_days()
-        faculty_names = self.main.admin_model.get_unassigned_faculties()
+        day_lbl = tk.Label(self.main_frame, text="Days", font=lbl_font, fg="#020202")
+        day_lbl.place(x=320, y=62)
+
+        self.day_var = tk.StringVar()
+        self.day_var.set("Select Day \u25BE")
+        self.day_dropdown = tk.OptionMenu(
+            self.main_frame,
+            self.day_var,
+            *days_of_week
+        )
+
+        # Dropdown design
+        self.day_dropdown.config(
+            font=("Lexend Deca", 5, "bold"),
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#E0E0E0",
+            activeforeground="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            bd=1,
+            padx=18,
+        )
+
+        menu = self.day_dropdown["menu"]
+        menu.config(
+            font=entry_font,
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#8D0404",
+            activeforeground="#FFFFFF",
+            bd=0,
+            tearoff=0
+        )
+        self.day_dropdown.place(x=370, y=66)
+
+        # Time
         schedule_times = self.main.admin_model.get_schedule_times()
+        time_lbl = tk.Label(self.main_frame, text="Time", font=lbl_font, fg="#020202")
+        time_lbl.place(x=320, y=106)
 
-        # Row 1 - Course Name and Day
-        self.course_name = create_label_field("Course Name*", 0, 0)
-        self.day_dropdown = create_label_field("Day*", 0, 1, widget_type="dropdown", options=days_of_week)
+        self.time_var = tk.StringVar()
+        self.time_var.set("Select Time \u25BE")
+        self.time_dropdown = tk.OptionMenu(
+            self.main_frame,
+            self.time_var,
+            *schedule_times
+        )
 
-        # Row 2 - Professor and Time
-        self.professor_dropdown = create_label_field("Professor*", 1, 0, widget_type="dropdown", options=faculty_names)
-        self.time_dropdown = create_label_field("Time*", 1, 1, widget_type="dropdown", options=schedule_times)
+        # Dropdown design
+        self.time_dropdown.config(
+            font=("Lexend Deca", 5, "bold"),
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#E0E0E0",
+            activeforeground="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            bd=1,
+            padx=16,
+        )
+
+        menu = self.time_dropdown["menu"]
+        menu.config(
+            font=entry_font,
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#8D0404",
+            activeforeground="#FFFFFF",
+            bd=0,
+            tearoff=0
+        )
+        self.time_dropdown.place(x=370, y=110)
 
         # Add Course Button
-        self.add_course_btn = ttk.Button(self.main_frame, text="Add Course", command=self.add_course)
-        self.add_course_btn.pack(pady=5)
+        self.add_course_btn = tk.Button(
+            self.main_frame,
+            width=14,
+            text="Add Course",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 8, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=self.validate_add_course # NOTE: Bookmark
+        )
+        self.add_course_btn.place(x=374, y=150)
+        self.add_course_btn.bind("<Enter>", lambda e: self.add_course_btn_hover_effect(e, True))
+        self.add_course_btn.bind("<Leave>", lambda e: self.add_course_btn_hover_effect(e, False))
 
-    def add_course(self):
-        if self.validate_fields():
-            course_name = self.course_name.get().strip()
-            faculty_name = self.professor_dropdown.get()
-            day = self.day_dropdown.get()
-            time_range = self.time_dropdown.get().split('-')
-            time_start, time_end = time_range[0], time_range[1]
+        # Close Button
+        self.close_btn = tk.Button(
+            self.main_frame,
+            width=14,
+            text="Close",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 8, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=self.close
+        )
+        self.close_btn.place(x=250, y=150)
+        self.close_btn.bind("<Enter>", lambda e: self.close_btn_hover_effect(e, True))
+        self.close_btn.bind("<Leave>", lambda e: self.close_btn_hover_effect(e, False))
 
-            # Get faculty_id and schedule_id
+    def close_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.close_btn.config(background=new_color)
+
+    def add_course_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.add_course_btn.config(background=new_color)
+
+    def validate_add_course(self):
+        course_name = self.course_name.get().strip()
+        faculty_name = self.professor_var.get()
+        selected_day = self.day_var.get()
+        selected_time = self.time_var.get()
+
+        errors = []
+
+        # Course name validation
+        if not course_name:
+            errors.append("Course name is required.")
+        elif len(course_name) > 100:
+            errors.append("Course name must not exceed 100 characters.")
+
+        # Professor selection validation
+        if faculty_name == "Select Professor \u25BE":
+            errors.append("Please select a professor.")
+
+        # Day selection validation
+        if selected_day == "Select Day \u25BE":
+            errors.append("Please select a day.")
+
+        # Time selection validation
+        if selected_time == "Select Time \u25BE":
+            errors.append("Please select a time.")
+        else:
+            try:
+                time_start, time_end = [t.strip() for t in selected_time.split('-')]
+                if self.main.admin_model.is_schedule_taken(selected_day, time_start, time_end):
+                    errors.append("Selected schedule is already taken.")
+            except ValueError:
+                errors.append("Invalid time format. Please select a valid time range.")
+
+        # If no errors, proceed to add course
+        if not errors:
             faculty_id = self.main.admin_model.get_faculty_id_by_name(faculty_name)
-            schedule_id = self.main.admin_model.get_schedule_id(day, time_start, time_end)
+            schedule_id = self.main.admin_model.get_schedule_id(selected_day, time_start, time_end)
 
-            if faculty_id is None or schedule_id is None:
-                messagebox.showerror("Error", "Invalid Faculty or Schedule selection.")
+            if not schedule_id:
+                messagebox.showerror("Error", "Schedule ID could not be found for the selected day and time.")
                 return
 
-            # Add course
-            if self.main.admin_model.add_course(course_name, faculty_id, schedule_id):
-                messagebox.showinfo("Success", "Course added successfully!")
-                self.refresh_course_list()
-                self.destroy()
-            else:
-                messagebox.showerror("Error", "Failed to add course.")
+            self.main.admin_model.add_course(course_name, faculty_id, schedule_id)
+            messagebox.showinfo("Success", "Course added successfully!")
+            self.clear_fields()
+            self.refresh_course_list()
+        else:
+            messagebox.showerror("Validation Error", "\n".join(errors))
 
-    def validate_fields(self):
-        if not self.course_name.get().strip():
-            messagebox.showerror("Validation Error", "Course Name cannot be empty.")
-            return False
-        if self.day_dropdown.get() == "Select Day*":
-            messagebox.showerror("Validation Error", "Please select a Day.")
-            return False
-        if self.professor_dropdown.get() == "Select Professor*":
-            messagebox.showerror("Validation Error", "Please select a Professor.")
-            return False
-        if self.time_dropdown.get() == "Select Time*":
-            messagebox.showerror("Validation Error", "Please select a Time.")
-            return False
-
-        # Extract selected time_start and time_end from the time dropdown (assuming it's in format 'start-end')
-        selected_time = self.time_dropdown.get().split('-')
-        time_start = selected_time[0].strip()
-        time_end = selected_time[1].strip()
-
-        # Check if the schedule is already taken
-        if self.main.admin_model.is_schedule_taken(self.day_dropdown.get(), time_start, time_end):
-            messagebox.showerror("Validation Error", "The selected schedule is already assigned to another course.")
-            return False
-
-        return True
 
     def refresh_course_list(self):
         course_list = self.admin_courses.course_list
@@ -118,14 +259,11 @@ class AddCourse(tk.Toplevel):
         self.admin_courses.display_courses()
 
     def clear_fields(self):
-        # Clear course name entry
         self.course_name.delete(0, tk.END)
+        self.professor_var.set("Select Professor \u25BE")
+        self.day_var.set("Select Day \u25BE")
+        self.time_var.set("Select Time \u25BE")
 
-        # Reset dropdowns to default values
-        self.day_dropdown.set("Select Day*")
-        self.professor_dropdown.set("Select Professor*")
-        self.time_dropdown.set("Select Time*")
-
-    def on_close(self):
+    def close(self):
         self.destroy()
 

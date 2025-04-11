@@ -12,22 +12,10 @@ class FacultyEvaluation(tk.Frame):
         self.main = main
         self.faculty_landing = faculty_landing
 
+        # Paths
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
         self.IMAGES_DIR = BASE_DIR / "static/images"
-
-        FONT_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONT_DIR / "LexandDeca-Bold.ttf"
         self.PFP_DIR = BASE_DIR / "static/student_pfps"
-
-        LEXAND_DECA_6 = font.Font(family="Lexand Deca", size=6)
-        LEXAND_DECA_10 = font.Font(family="Lexand Deca", size=10)
-        LEXAND_DECA_12 = font.Font(family="Lexand Deca", size=12)
-        LEXAND_DECA_14 = font.Font(family="Lexand Deca", size=14)
-        LEXAND_DECA_16 = font.Font(family="Lexand Deca", weight="bold", size=16)
-        LEXAND_DECA_18 = font.Font(family="Lexand Deca", weight="bold", size=18)
-        LEXAND_DECA_20 = font.Font(family="Lexand Deca", weight="bold", size=20)
-        LEXAND_DECA_40 = font.Font(family="Lexand Deca", weight="bold", size=40)
 
         self.evaluation_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.evaluation_canvas.pack(fill=tk.BOTH, expand=True)

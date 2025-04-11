@@ -47,6 +47,7 @@ class FacultyModel:
         JOIN student_tbl s ON a.stu_id_fk = s.stu_id
         JOIN course_tbl c ON a.cou_id_fk = c.cou_id
         WHERE c.fac_id_fk = %s
+        ORDER BY s.stu_last_name ASC
         """
             cursor.execute(query, (fac_id,))
             students = cursor.fetchall()
