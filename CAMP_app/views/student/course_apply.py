@@ -1,7 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import ttk
-from tkinter import messagebox
+from customtkinter import *
 
 class CourseApplication(tk.Toplevel):
     def __init__(self, parent,student_courses,main,student_data,stu_id):
@@ -15,159 +15,178 @@ class CourseApplication(tk.Toplevel):
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
 
+        # Make this window modal
+        self.grab_set()  # Prevents interaction with other windows
+        self.transient(parent)  # Associates this window with the parent
+        self.wait_visibility()  # Ensures the window is fully drawn before proceeding
+
         # Frame for Available Courses
         frame = tk.Frame(self, bd=2, relief="ridge")
         frame.pack(pady=10, padx=10, fill="x")
 
-        self.lbl = tk.Label(frame, text="Course Application", font=("Arial", 14, "bold"),
-                            fg="white", bg="#8D0404")
+        self.lbl = ctk.CTkLabel(frame, text="Course Application", font=("Lexend Deca", 14, "bold"),
+                                text_color="white", bg_color="#8D0404")
         self.lbl.pack(fill="x")
 
-        self.courses = ttk.Treeview(frame, columns=("cou_name", "assigned_prof"), show="headings")
+        style = ttk.Style()
+        style.configure("CustomCourses.Treeview", rowheight=30, font=("Lexend Deca", 10, "normal"))
+
+        self.courses = ttk.Treeview(frame, columns=("cou_name", "assigned_prof"), show="headings",style="CustomCourses.Treeview")
         self.courses.heading("cou_name", text="Course Name")
         self.courses.heading("assigned_prof", text="Assigned Professor")
 
         self.courses.column("cou_name", width=350, anchor="center")
         self.courses.column("assigned_prof", width=350, anchor="center")
-
         self.courses.pack(side="left", fill="both", expand=True)
 
         self.get_initial_courses()
 
-        self.selected_courses_list = {}  # Use dictionary instead of a list
+        self.selected_courses_list = {}
         self.course_buttons = {}  # Track buttons for selected courses
 
         # Frame for Selected Courses
-        self.selected_frame = tk.Frame(self, bd=2, relief="ridge")
+        self.selected_frame = tk.Frame(self, bd=2, relief="ridge",width=50, height=150)
         self.selected_frame.pack(pady=10, padx=10, fill="x")
+        self.selected_frame.propagate(False)
 
-        self.selected_label = tk.Label(self.selected_frame, text="Selected Course", font=("Arial", 14, "bold"),
-                                       fg="white", bg="#8D0404")
+        self.selected_label = ctk.CTkLabel(self.selected_frame, text="Selected Course",
+                                           font=("Lexend Deca", 14, "bold"),
+                                           text_color="white", bg_color="#8D0404")
         self.selected_label.pack(fill="x")
 
-        self.selected_list = ttk.Treeview(self.selected_frame, columns=("cou_name", "assigned_prof"), show="headings")
+        style = ttk.Style()
+        style.configure("Custom.Treeview",rowheight=30,font=("Lexend Deca", 10, "normal"))
+
+        self.selected_list = ttk.Treeview(self.selected_frame, columns=("cou_name", "assigned_prof","Action"), show="headings",style="Custom.Treeview")
         self.selected_list.heading("cou_name", text="Course Name")
         self.selected_list.heading("assigned_prof", text="Assigned Professor")
+        self.selected_list.heading("Action", text="")
 
-        self.selected_list.column("cou_name", width=350, anchor="center")
-        self.selected_list.column("assigned_prof", width=350, anchor="center")
+        self.selected_list.column("Action", width=30, anchor="center")
+        self.selected_list.column("cou_name", anchor="center")
+        self.selected_list.column("assigned_prof", anchor="center")
         self.selected_list.pack(fill="both", expand=True)
 
         self.confirm_btn = ctk.CTkButton(
-            self, text="Confirm Application", fg_color="#8D0404", text_color="white",
+            self, text="Confirm Application", fg_color="#8D0404", text_color="white",font=("Lexend Deca", 14, "normal"),
             command=lambda: self.confirm_application())
 
         self.confirm_btn.place(relx=0.95, rely=0.95, anchor="se")
 
-        # Back Button (Compact "X")
-        self.back_btn = ctk.CTkButton(self, text="X", fg_color="#8D0404", text_color="white",
-                                      width=30, font=("Arial", 14, "bold"),
+        # Back Button
+        self.back_btn = ctk.CTkButton(self, text="X", fg_color="#8D0404", text_color="white",corner_radius=0,
+                                      width=30, font=("Arial", 14, "bold"),hover=False,
                                       command=self.go_back)
-        self.back_btn.place(x=900, y=10)  # Adjust position for better alignment
+        self.back_btn.place(x=900, y=13)
+
+        self.selected_list.bind("<Button-1>", self.on_tree_click)
 
     def get_initial_courses(self):
         student_id = self.stu_id
         initial_courses = self.main.student_model.fetch_courses(student_id)
 
         if initial_courses and isinstance(initial_courses[0], dict):
-            initial_courses = [(course.get("cou_id"), course.get("cou_name", "N/A"), course.get("fac_full_name", "N/A"))
-                               for course in initial_courses]
+            initial_courses = [
+                (course.get("cou_id"), course.get("cou_name", "N/A"), course.get("fac_full_name", "N/A"))
+                for course in initial_courses
+            ]
 
         self.courses.delete(*self.courses.get_children())
-        for course_id, course_name, professor in initial_courses:
-            row_id = self.courses.insert("", "end", values=(course_name, professor))  # No course_id in display
+
+        # Clear existing buttons if needed
+        if hasattr(self, 'course_buttons_panel'):
+            for btn in self.course_buttons_panel:
+                btn.destroy()
+        self.course_buttons_panel = []
+
+        style = ttk.Style()
+        row_height = style.lookup("Treeview", "rowheight") or 20
+
+        top_offset = self.courses.winfo_rooty() - self.winfo_rooty() + 30  # Match Treeview offset
+        button_padding = 38
+
+        for index, (course_id, course_name, professor) in enumerate(initial_courses):
+            row_id = self.courses.insert("", "end", values=(course_name, professor))
 
             btn = ctk.CTkButton(
-                self, text="Select", corner_radius=7, fg_color="#8D0404", text_color="white", width=100, height=10,
+                self, text="Select", corner_radius=7, fg_color="#8D0404", text_color="white",font=("Lexend Deca", 13, "normal"),
+                width=100, height=20,
                 command=lambda c=(course_id, course_name, professor): self.selected_courses(c)
             )
-            btn.place(x=850, y=60 + (len(self.courses.get_children()) - 1) * 25)
+
+            y_pos = top_offset + index * row_height + button_padding
+            btn.place(x=870, y=y_pos)
+            self.course_buttons_panel.append(btn)
 
     def selected_courses(self, course):
         if len(course) == 3:
             course_id, course_name, professor = course
-        elif len(course) == 2:  # Handle missing course_id
-            course_id = "N/A"  # Default value
+        elif len(course) == 2:
+            course_id = "N/A"
             course_name, professor = course
             print(f"Warning: Missing course_id for {course_name}. Using 'N/A'.")
         else:
-            print(f"Invalid course data: {course}")  # Debugging info
+            print(f"Invalid course data: {course}")
             return
 
         if course_name not in self.selected_courses_list:
-            print(self.selected_courses_list)
-            self.selected_courses_list[course_name] = (professor, course_id)  # Store course info internally
-
-            # Insert course_name and professor into the Treeview (Exclude course_id)
-            row_id = self.selected_list.insert("", "end", values=(course_name, professor))
-
-            # GUI updates for remove button
-            self.update_idletasks()
-            bbox = self.selected_list.bbox(row_id)
-
-            if bbox:
-                x_pos = self.selected_list.winfo_width() - 50
-                y_pos = bbox[1] + bbox[3]
-
-                remove_btn = ctk.CTkButton(
-                    self.selected_frame, text="X", fg_color="red", width=30, height=20,
-                    command=lambda c=course_name: self.remove_course(c)
-                )
-
-                self.after(100, lambda: remove_btn.place(x=x_pos, y=y_pos + 5))
-                self.course_buttons[course_name] = (row_id, remove_btn)
-
-            self.realign_buttons()
+            self.selected_courses_list[course_name] = (professor, course_id)
+            self.selected_list.insert("", "end", values=(course_name, professor, "🗑"))
 
     def realign_buttons(self):
         """ Adjusts button positions to match row positions dynamically """
-        self.update_idletasks()  # Ensure all widgets update first
+        self.update_idletasks()
 
         for course, (row_id, btn) in self.course_buttons.items():
-            bbox = self.selected_list.bbox(row_id)
-            if bbox:  # Ensure row is still visible
-                x_pos = self.selected_list.winfo_width() - 50  # Keep aligned
-                y_pos = bbox[1] + bbox[3]  # Move button lower by adding row height
+            # Get the bounding box for the row in the main Treeview
+            bbox = self.courses.bbox(row_id)
+            if bbox:
+                x_pos = bbox[2] + 10  # Position the button next to the last column
+                y_pos = bbox[1]  # Align with the row's top y-coordinate
 
-                btn.place(x=x_pos, y=y_pos + 5)  # Move 5 pixels lower
+                btn.place(x=x_pos, y=y_pos)  # Adjust the button position next to the row
 
     def remove_course(self, course_name):
-        if course_name in self.course_buttons:
-            row_id, btn = self.course_buttons.pop(course_name)
-            self.selected_list.delete(row_id)
-            btn.destroy()
-            del self.selected_courses_list[course_name]  # Remove from dictionary
+        # Remove from data structure
+        if course_name in self.selected_courses_list:
+            del self.selected_courses_list[course_name]
 
-            self.update_selected_buttons()
-
-    def update_selected_buttons(self):
-        self.update_idletasks()  # Ensure GUI refreshes
-        for course, (row_id, btn) in self.course_buttons.items():
-            bbox = self.selected_list.bbox(row_id)
-            if bbox:
-                x_pos = self.selected_list.winfo_width() - 50
-                y_pos = bbox[1] + bbox[3] // 2
-                btn.place(x=x_pos, y=y_pos)
+        # Find and delete the row from Treeview
+        for row_id in self.selected_list.get_children():
+            values = self.selected_list.item(row_id)["values"]
+            if values and values[0] == course_name:
+                self.selected_list.delete(row_id)
+                break
 
     def confirm_application(self):
-        # Now we have the stu_id directly available as self.stu_id
         student_id = self.stu_id
 
-        # Now, 'self.selected_courses_list' contains course_name -> (professor, course_id)
         for course_name, (professor, course_id) in self.selected_courses_list.items():
             print(f"Applying for {course_name} with ID {course_id}...")
 
-            # Call the apply_for_course method and pass the student ID and course ID
             result = self.main.student_model.apply_for_course(student_id, course_id)
 
             # Check the result of the application process
             if result:
+                self.destroy()
                 print(f"Successfully applied for course: {course_name}")
             else:
                 print(f"Failed to apply for course: {course_name}")
 
+    def on_tree_click(self, event):
+        region = self.selected_list.identify("region", event.x, event.y)
+        if region == "cell":
+            row_id = self.selected_list.identify_row(event.y)
+            col = self.selected_list.identify_column(event.x)
+
+            if col == "#3":
+                values = self.selected_list.item(row_id)["values"]
+                if values:
+                    course_name = values[0]
+                    self.remove_course(course_name)
+
     def go_back(self):
-        self.destroy()  # Closes the current window
+        self.destroy()
 
 
 
