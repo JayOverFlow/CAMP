@@ -12,29 +12,45 @@ class StudentModel:
 
         try:
             cursor = conn.cursor(dictionary=True)
-            query = query = """
-    SELECT 
-        course_tbl.cou_id AS course_id,  
-        course_tbl.cou_name AS course_name, 
-        apply_tbl.raw_grade AS raw_grade,
-        apply_tbl.final_grade AS final_grade,
-        CONCAT(
-            faculty_tbl.fac_first_name, ' ', 
-            IFNULL(faculty_tbl.fac_middle_name, ''), ' ', 
-            faculty_tbl.fac_last_name
-        ) AS assigned_professor
-    FROM apply_tbl
-    INNER JOIN course_tbl ON apply_tbl.cou_id_fk = course_tbl.cou_id
-    INNER JOIN faculty_tbl ON course_tbl.fac_id_fk = faculty_tbl.fac_id
-    WHERE apply_tbl.stu_id_fk = %s
-"""
+
+            query = """
+            SELECT 
+    course_tbl.cou_id AS course_id,  
+    course_tbl.cou_name AS course_name, 
+    apply_tbl.raw_grade AS raw_grade,
+    apply_tbl.final_grade AS final_grade,
+    CONCAT(
+        faculty_tbl.fac_first_name, ' ', 
+        IFNULL(faculty_tbl.fac_middle_name, ''), ' ', 
+        faculty_tbl.fac_last_name
+    ) AS assigned_professor,
+    CASE 
+        WHEN EXISTS (
+            SELECT 1 
+            FROM evaluation_tbl 
+            WHERE evaluation_tbl.stu_id_fk = apply_tbl.stu_id_fk 
+              AND evaluation_tbl.fac_id_fk = course_tbl.fac_id_fk
+        )
+        THEN TRUE
+        ELSE FALSE
+    END AS is_evaluated
+FROM apply_tbl
+INNER JOIN course_tbl ON apply_tbl.cou_id_fk = course_tbl.cou_id
+INNER JOIN faculty_tbl ON course_tbl.fac_id_fk = faculty_tbl.fac_id
+WHERE apply_tbl.stu_id_fk = %s
+GROUP BY course_tbl.cou_id  -- ensures no duplicate course entries
+
+            """
+
             cursor.execute(query, (stu_id,))
             result = cursor.fetchall()
             cursor.close()
             return result
+
         except mysql.connector.Error as error:
             print(error)
             return None
+
         finally:
             conn.close()
 

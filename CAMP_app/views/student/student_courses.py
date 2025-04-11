@@ -24,20 +24,14 @@ class StudentCoursesTab(tk.Frame):
         self.lbl = ttk.Label(self, text="Courses", style="Custom.TLabel")
         self.lbl.grid(row=0, column=0, columnspan=3, pady=10)
 
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=30, font=("Lexend Deca", 10, "bold"))
         # Configure row height
-        self.style.configure("Treeview", rowheight=30)
-
-        self.style.configure("Treeview.Heading",
-                        font=("Arial", 12, "bold"),
-                        foreground="white",
-                        background="#8D0404")
-        # Force the header to stay red when hovered (removes hover effect)
-        self.style.map("Treeview.Heading",
-                       background=[("active", "#8D0404"), ("!active", "#8D0404")])
+        self.style.configure("Treeview.Heading", background="lightblue", font=("Lexend Deca", 10, "bold"))
 
         self.course_list = ttk.Treeview(self,
-                                        columns=["cou_name", "raw_grade", "final_grade", "assigned_prof", "evaluate"],style="Treeview")
-        self.course_list.place(x=5, y=50, width=800, height=500)
+                                        columns=["cou_name", "raw_grade", "final_grade", "assigned_prof", "evaluate"],style="Treeview",show="headings")
+        self.course_list.place(x=10, y=50, width=800, height=400)
 
         self.course_list.bind("<<TreeviewSelect>>", self.disable_selection)
         # Disable clicking on headers
@@ -60,39 +54,57 @@ class StudentCoursesTab(tk.Frame):
 
         self.display_enrolled_courses(self.student_session["stu_id"])
 
-        self.apply_btn = ctk.CTkButton(self, text="+ Apply for Course", corner_radius=7, fg_color="#8D0404",
+        self.apply_btn = ctk.CTkButton(self, text="+ Apply for Course", corner_radius=7, fg_color="#8D0404",font=("Lexend Deca", 13,),
                                        text_color="white", command=self.open_course_application)
         self.apply_btn.place(x=659, y=17)
 
     def display_enrolled_courses(self, stu_id):
         enrolled_courses = self.main.student_model.get_courses(stu_id)
+
         print("Displaying schedule for student ID:", stu_id)
 
-        # Ensure button alignment starts properly
-        button_y_offset = 74  # Align with the first row
-        row_height = 31  # Approximate row height in the Treeview
-        self.evaluate_buttons = []  # Store buttons for reference
+        button_y_offset = 75
+        row_height = 30
+        self.evaluate_buttons = []
 
         for index, course in enumerate(enrolled_courses):
-            # Insert course data into the Treeview
-            item_id = self.course_list.insert("", "end",
-                                              values=(
-                                                  course["course_name"],
-                                                  course["raw_grade"],
-                                                  course["final_grade"],
-                                                  course["assigned_professor"],
-                                                  ""  # Empty column for alignment
-                                              )
-                                              )
+            item_id = self.course_list.insert(
+                "", "end",
+                values=(
+                    course["course_name"],
+                    course["raw_grade"],
+                    course["final_grade"],
+                    course["assigned_professor"],
+                    ""  # for visual alignment only
+                )
+            )
 
-            # Create an Evaluate button that remembers its course & professor
-            btn = ctk.CTkButton(self, text="Evaluate", corner_radius=5, fg_color="#8D0404",
-                                text_color="white", width=90, height=25,
-                                command=lambda c=course: self.evaluate_course(c["course_name"],
-                                                                              c["assigned_professor"]))
-            btn.place(x=705, y=button_y_offset + (index * row_height))  # Align button with row
+            is_disabled = course.get("is_evaluated", False)
 
-            self.evaluate_buttons.append(btn)  # Store for future reference
+            # Button color and state
+            button_state = tk.DISABLED if is_disabled else tk.NORMAL
+            button_color = "#B0B0B0" if is_disabled else "#8D0404"
+            button_text = "Evaluated" if is_disabled else "Evaluate"
+
+            btn = ctk.CTkButton(
+                self,
+                text=button_text,
+                corner_radius=5,
+                fg_color=button_color,
+                text_color="white",
+                width=90,
+                height=25,
+                font=("Lexend Deca", 12, "bold"),
+                command=(
+                    None if is_disabled else lambda c=course: self.evaluate_course(
+                        c["course_name"], c["assigned_professor"]
+                    )
+                )
+            )
+            btn.configure(state=button_state)
+            btn.place(x=705, y=button_y_offset + (index * row_height))
+
+            self.evaluate_buttons.append(btn)
 
     def open_course_application(self):
         # Get student ID from the current session
@@ -105,10 +117,10 @@ class StudentCoursesTab(tk.Frame):
     def evaluate_course(self, course_name, professor_name):
         """ Opens the Faculty Evaluation Form with the selected course & professor """
         stu_id = self.student_session["stu_id"]
-        stu_full_name = self.student_session["stu_full_name"]
-
         # Retrieve faculty_id using professor's name
         faculty_id = self.main.student_model.get_faculty_id(professor_name)
+        faculty_name = professor_name
+        course_name = course_name
 
         if not faculty_id:
             tk.messagebox.showerror("Error", f"Faculty ID not found for {professor_name}.")
@@ -117,7 +129,7 @@ class StudentCoursesTab(tk.Frame):
         print(f"Evaluating Course: {course_name}, Professor: {professor_name} (ID: {faculty_id})")  # Debugging
 
         # Open Faculty Evaluation Form with the correct details
-        FacultyEvalView(self, self.main, self.student_session, stu_id, faculty_id,stu_full_name)
+        FacultyEvalView(self, self.main, self.student_session, stu_id, faculty_id,faculty_name,course_name)
 
     def disable_selection(self, event):
         self.course_list.selection_remove(self.course_list.selection())
