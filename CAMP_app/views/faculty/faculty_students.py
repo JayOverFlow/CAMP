@@ -12,22 +12,10 @@ class FacultyStudents(tk.Frame):
         self.main = main
         self.faculty_landing = faculty_landing
 
+        # Paths
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
         self.IMAGES_DIR = BASE_DIR / "static/images"
-
-        FONT_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONT_DIR / "LexandDeca-Bold.ttf"
         self.PFP_DIR = BASE_DIR / "static/student_pfps"
-
-        LEXAND_DECA_6 = font.Font(family="Lexand Deca", size=6)
-        LEXAND_DECA_10 = font.Font(family="Lexand Deca", size=10)
-        LEXAND_DECA_12 = font.Font(family="Lexand Deca", size=12)
-        LEXAND_DECA_14 = font.Font(family="Lexand Deca", size=14)
-        LEXAND_DECA_16 = font.Font(family="Lexand Deca", weight="bold", size=16)
-        LEXAND_DECA_18 = font.Font(family="Lexand Deca", weight="bold", size=18)
-        LEXAND_DECA_20 = font.Font(family="Lexand Deca", weight="bold", size=20)
-        LEXAND_DECA_40 = font.Font(family="Lexand Deca", weight="bold", size=40)
 
         self.students_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.students_canvas.pack(fill=tk.BOTH, expand=True)
@@ -139,6 +127,8 @@ class FacultyStudents(tk.Frame):
             cursor="hand2",
             command=self.close_stu_profile
         )
+        self.close_profile_btn.bind("<Enter>", lambda e: self.close_profile_btn_hover_effect(e, True))
+        self.close_profile_btn.bind("<Leave>", lambda e: self.close_profile_btn_hover_effect(e, False))
         self.close_profile_btn.place(x=280)
 
         self.stu_profile_card_canvas = tk.Canvas(self.stu_profile_card, bg="#FFFFFF", bd=0, highlightthickness=0)
@@ -255,21 +245,54 @@ class FacultyStudents(tk.Frame):
         tk.Label(self.stu_grades_card, text="Written Works (200):", bg="#FFFFFF", font=label_font).grid(
             row=1, column=0, sticky="e", padx=label_padx, pady=3
         )
-        self.written_works = tk.Entry(self.stu_grades_card, font=entry_font, width=18)
+        self.written_works = tk.Entry(
+            self.stu_grades_card,
+            width=18,
+            bg="#F0F0F0",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font
+        )
         self.written_works.grid(row=1, column=1, padx=entry_padx, pady=3)
 
         # Final Project
         tk.Label(self.stu_grades_card, text="Final Project (100):", bg="#FFFFFF", font=label_font).grid(
             row=2, column=0, sticky="e", padx=label_padx, pady=3
         )
-        self.final_project = tk.Entry(self.stu_grades_card, font=entry_font, width=18)
+        self.final_project = tk.Entry(
+            self.stu_grades_card,
+            width=18,
+            bg="#F0F0F0",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font
+        )
         self.final_project.grid(row=2, column=1, padx=entry_padx, pady=3)
 
         # Examination
         tk.Label(self.stu_grades_card, text="Examinations (150):", bg="#FFFFFF", font=label_font).grid(
             row=3, column=0, sticky="e", padx=label_padx, pady=3
         )
-        self.examination = tk.Entry(self.stu_grades_card, font=entry_font, width=18)
+        self.examination = tk.Entry(
+            self.stu_grades_card,
+            width=18,
+            bg="#F0F0F0",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font
+        )
         self.examination.grid(row=3, column=1, padx=entry_padx, pady=3)
 
         # Raw Grade
@@ -300,8 +323,18 @@ class FacultyStudents(tk.Frame):
             command=lambda: self.submit_scores(cou_id, stu_id)
         )
         self.submit_btn.grid(row=6, column=0, columnspan=2, pady=(15, 10), ipadx=10, ipady=3)
+        self.submit_btn.bind("<Enter>", lambda e: self.submit_btn_hover_effect(e, True))
+        self.submit_btn.bind("<Leave>", lambda e: self.submit_btn_hover_effect(e, False))
 
         self.display_stu_score(cou_id, stu_id)
+
+    def submit_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.submit_btn.config(background=new_color)
+
+    def close_profile_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.close_profile_btn.config(background=new_color)
 
     def display_stu_score(self, cou_id, stu_id):
         # Fetch student's scores
