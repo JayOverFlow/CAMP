@@ -15,7 +15,7 @@ class AddCourse(tk.Toplevel):
         self.resizable(False, False)
 
         # Main frame
-        self.main_frame = tk.Frame(self)
+        self.main_frame = tk.Frame(self,  bg="#FFFFFF")
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Header
@@ -26,7 +26,7 @@ class AddCourse(tk.Toplevel):
         entry_font = font.Font(family="Lexend Deca", size=8)
 
         # Course Name
-        tk.Label(self.main_frame, text="Course Name", font=lbl_font, fg="#020202").place(x=20, y=62)
+        tk.Label(self.main_frame, text="Course Name", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=62)
         self.course_name = tk.Entry(
             self,
             width=24,
@@ -43,7 +43,7 @@ class AddCourse(tk.Toplevel):
 
         # Professor
         prof_names = self.main.admin_model.get_unassigned_faculties()
-        prof_lbl = tk.Label(self.main_frame, text="Professor", font=lbl_font, fg="#020202")
+        prof_lbl = tk.Label(self.main_frame, text="Professor", font=lbl_font, fg="#020202", bg="#FFFFFF")
         prof_lbl.place(x=20, y=106)
 
         self.professor_var = tk.StringVar()
@@ -82,7 +82,7 @@ class AddCourse(tk.Toplevel):
 
         # Day
         days_of_week = self.main.admin_model.get_schedule_days()
-        day_lbl = tk.Label(self.main_frame, text="Days", font=lbl_font, fg="#020202")
+        day_lbl = tk.Label(self.main_frame, text="Days", font=lbl_font, fg="#020202", bg="#FFFFFF")
         day_lbl.place(x=320, y=62)
 
         self.day_var = tk.StringVar()
@@ -121,7 +121,7 @@ class AddCourse(tk.Toplevel):
 
         # Time
         schedule_times = self.main.admin_model.get_schedule_times()
-        time_lbl = tk.Label(self.main_frame, text="Time", font=lbl_font, fg="#020202")
+        time_lbl = tk.Label(self.main_frame, text="Time", font=lbl_font, fg="#020202", bg="#FFFFFF")
         time_lbl.place(x=320, y=106)
 
         self.time_var = tk.StringVar()
