@@ -41,13 +41,6 @@ class StudentProfileTab(tk.Frame,):
         PFP_DIR = BASE_DIR / "static/student_pfps"
 
         FONT_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONT_DIR / "LexandDeca-Bold.ttf"
-
-
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
 
         self.full_name = ttk.Label(self, text=self.student_session["stu_full_name"],foreground="#8D0404",font=("Lexend Deca",30,"bold"))
         self.full_name.place(x=200, y=105)
@@ -113,6 +106,7 @@ class StudentProfileTab(tk.Frame,):
         if not self.edit_mode:
             self.enable_edit_mode()
         else:
+            messagebox.showinfo("Saved Changes", "The Changes were saved successfully")
             self.save_updates()
 
     def enable_edit_mode(self):
@@ -228,10 +222,10 @@ class StudentProfileTab(tk.Frame,):
         # Create a circular mask for the image itself
         mask = Image.new("L", size, 0)
         draw_mask = ImageDraw.Draw(mask)
-        draw_mask.ellipse((1, 1, size[0] - 1, size[1] - 1), fill=255)  # Draw a filled circle mask
+        draw_mask.ellipse((1, 1, size[0] - 1, size[1] - 1), fill=255)
 
         # Paste the profile picture inside the circle (using the mask)
-        final_image.paste(pfp, (0, 0), mask)  # Paste the image using the circular mask
+        final_image.paste(pfp, (0, 0), mask)
 
         return ImageTk.PhotoImage(final_image)
 
