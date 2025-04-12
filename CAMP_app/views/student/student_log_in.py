@@ -45,6 +45,7 @@ class StudentLogIn(tk.Frame):
         self.camp_logo = ImageTk.PhotoImage(camp_logo)
         self.canvas.create_image(670, 85, image=self.camp_logo, anchor=tk.NW)
 
+
         self.canvas.create_text(600, 250, anchor=tk.NW, text="Student Username:", font=("Lexend Deca", 12, "bold"), fill="#FFFFFF")
 
         self.student_username_entry = ttk.Entry(self)  # pass self
@@ -61,6 +62,7 @@ class StudentLogIn(tk.Frame):
 
         style.configure(
             'btnStyle.TButton',
+
             font=("Lexend Deca", 12, "bold"),
             relief="solid",
             borderwidth=5,

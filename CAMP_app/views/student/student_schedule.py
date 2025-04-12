@@ -17,7 +17,7 @@ class StudentScheduleTab(tk.Frame):
         parent.grid_rowconfigure(0, weight=1)
         parent.grid_columnconfigure(0, weight=1)
 
-        # Calendar Widget (Top Right)
+        # Calendar Widget
         self.calendar = Calendar(self, selectmode='day', year=2025, month=4, day=8,
             headersforeground="#8D0404",background="#FFFFFF",foreground="black",font=("Lexend Deca", 9, "normal"))
         self.calendar.place(x=559, y=53)

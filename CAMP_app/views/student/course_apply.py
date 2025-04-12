@@ -4,12 +4,13 @@ from tkinter import ttk
 from customtkinter import *
 
 class CourseApplication(tk.Toplevel):
-    def __init__(self, parent,student_courses,main,student_data,stu_id):
+    def __init__(self, parent,student_courses,main,student_data,stu_id,on_submit=None):
         super().__init__(parent)
         self.student_courses = student_courses
         self.main = main
         self.student_data = student_data
         self.stu_id = stu_id
+        self.on_submit = on_submit
 
         self.title("Course Application")
         self.geometry("1000x600+120+20")
@@ -72,12 +73,6 @@ class CourseApplication(tk.Toplevel):
             command=lambda: self.confirm_application())
 
         self.confirm_btn.place(relx=0.95, rely=0.95, anchor="se")
-
-        # Back Button
-        self.back_btn = ctk.CTkButton(self, text="X", fg_color="#8D0404", text_color="white",corner_radius=0,
-                                      width=30, font=("Arial", 14, "bold"),hover=False,
-                                      command=self.go_back)
-        self.back_btn.place(x=900, y=13)
 
         self.selected_list.bind("<Button-1>", self.on_tree_click)
 
@@ -169,8 +164,11 @@ class CourseApplication(tk.Toplevel):
             # Check the result of the application process
             if result:
                 self.destroy()
+                if self.on_submit:
+                    self.on_submit()
                 print(f"Successfully applied for course: {course_name}")
             else:
+                self.destroy()
                 print(f"Failed to apply for course: {course_name}")
 
     def on_tree_click(self, event):
@@ -185,8 +183,6 @@ class CourseApplication(tk.Toplevel):
                     course_name = values[0]
                     self.remove_course(course_name)
 
-    def go_back(self):
-        self.destroy()
 
 
 

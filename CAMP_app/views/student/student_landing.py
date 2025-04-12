@@ -25,8 +25,7 @@ class StudentLanding(tk.Toplevel):
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
         self.config(bd=0, highlightthickness=0)
-        # Initialize ttk.Style
-        self.style = ttk.Style()  # ✅ Define self.style before using it
+        self.style = ttk.Style()
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
         # Images directory
@@ -34,19 +33,6 @@ class StudentLanding(tk.Toplevel):
 
         FONTS_DIR = BASE_DIR / "static/fonts"
         FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
-
-        # Font sizes
-        LEXEND_DECA_6 = font.Font(family="Lexend Deca", size=6)
-        LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
-        LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
-        LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
-        LEXEND_DECA_16 = font.Font(family="Lexend Deca", size=16)
-        LEXEND_DECA_18 = font.Font(family="Lexend Deca", size=18)
-        LEXEND_DECA_20 = font.Font(family="Lexend Deca", size=20)
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
 
         # Main Frame
         self.main_frame = tk.Frame(self)
@@ -112,7 +98,7 @@ class StudentLanding(tk.Toplevel):
             hover=False,
             command=lambda: self.display_frame("StudentProfileTab")
         )
-        self.profile_btn.place(x=0, y=180)  # Adjusted positioning
+        self.profile_btn.place(x=0, y=180)
 
         # Course Button Tab
         self.course_btn = ctk.CTkButton(
@@ -122,7 +108,7 @@ class StudentLanding(tk.Toplevel):
             hover=False,
             command=lambda: self.display_frame("StudentCoursesTab")
         )
-        self.course_btn.place(x=0, y=250)  # Adjusted positioning
+        self.course_btn.place(x=0, y=250)
 
         # Schedule Button Tab
         self.sched_btn = ctk.CTkButton(
@@ -133,13 +119,11 @@ class StudentLanding(tk.Toplevel):
             compound="left",
             command=lambda: self.display_frame("StudentScheduleTab")
         )
-        self.sched_btn.place(x=0, y=320)  # Adjusted positioning
+        self.sched_btn.place(x=0, y=320)
 
-        # Resize logout button image separately
-        logout_img = self.load_image("LogOutButton.png", size=(134, 20))  # Adjust size as needed
-
+        logout_img = self.load_image("LogOutButton.png", size=(134, 20))
         self.logout_btn = ctk.CTkButton(
-            self.sidebar,  # Match button size to image
+            self.sidebar,
             border_width=0,corner_radius=0,
             width=125,
             hover = False,
@@ -150,7 +134,7 @@ class StudentLanding(tk.Toplevel):
             command=self.log_out
         )
 
-        self.logout_btn.place(x=3, y=550)  # Align better with other buttons
+        self.logout_btn.place(x=3, y=550)
 
         # Show the profile tab by default when logging in
         self.display_frame("StudentProfileTab")

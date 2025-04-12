@@ -15,18 +15,14 @@ class StudentCoursesTab(tk.Frame):
         self.student_landing = student_landing
         self.student_session = student_landing.student_session
 
-        # Initialize ttk.Style
-        self.style = ttk.Style()  # ✅ Define self.style before using it
-
-        # ✅ Define self.style as an instance attribute
-        self.style.configure("Custom.TLabel", font=("Arial", 20, "bold"), foreground="#8D0404")
+        self.style = ttk.Style()
+        self.style.configure("Custom.TLabel", font=("Lexend Deca", 20, "bold"), foreground="#8D0404")
 
         self.lbl = ttk.Label(self, text="Courses", style="Custom.TLabel")
-        self.lbl.grid(row=0, column=0, columnspan=3, pady=10)
+        self.lbl.grid(row=0, column=0, columnspan=3, pady=10,padx=10)
 
         style = ttk.Style()
         style.configure("Treeview", rowheight=30, font=("Lexend Deca", 10, "bold"))
-        # Configure row height
         self.style.configure("Treeview.Heading", background="lightblue", font=("Lexend Deca", 10, "bold"))
 
         self.course_list = ttk.Treeview(self,
@@ -75,7 +71,7 @@ class StudentCoursesTab(tk.Frame):
                     course["raw_grade"],
                     course["final_grade"],
                     course["assigned_professor"],
-                    ""  # for visual alignment only
+                    ""
                 )
             )
 
@@ -112,7 +108,7 @@ class StudentCoursesTab(tk.Frame):
 
         student_data = self.main.student_model.fetch_courses(stu_id)
         # Initialize the CourseApplication and pass the student ID
-        CourseApplication(self, self.student_landing, self.main, student_data, stu_id)
+        CourseApplication(self, self.student_landing, self.main, student_data, stu_id,on_submit=self.refresh_courses)
 
     def evaluate_course(self, course_name, professor_name):
         """ Opens the Faculty Evaluation Form with the selected course & professor """
@@ -128,8 +124,7 @@ class StudentCoursesTab(tk.Frame):
 
         print(f"Evaluating Course: {course_name}, Professor: {professor_name} (ID: {faculty_id})")  # Debugging
 
-        # Open Faculty Evaluation Form with the correct details
-        FacultyEvalView(self, self.main, self.student_session, stu_id, faculty_id,faculty_name,course_name)
+        FacultyEvalView(self, self.main, self.student_session, stu_id, faculty_id,faculty_name,course_name,on_submit=self.refresh_courses)
 
     def disable_selection(self, event):
         self.course_list.selection_remove(self.course_list.selection())
@@ -141,6 +136,18 @@ class StudentCoursesTab(tk.Frame):
         if region == "heading":  # If clicked on the header, do nothing
             return "break"
 
+    def refresh_courses(self):
+        # Clear treeview
+        for item in self.course_list.get_children():
+            self.course_list.delete(item)
+
+        # Remove existing buttons
+        for btn in self.evaluate_buttons:
+            btn.destroy()
+        self.evaluate_buttons.clear()
+
+        # Reload
+        self.display_enrolled_courses(self.student_session["stu_id"])
 
 
 
