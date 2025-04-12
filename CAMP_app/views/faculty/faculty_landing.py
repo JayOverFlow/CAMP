@@ -1,4 +1,3 @@
-import ctypes
 import tkinter as tk
 from pathlib import Path
 from tkinter import font, messagebox
@@ -20,24 +19,9 @@ class FacultyLanding(tk.Toplevel):
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
 
-        # Get the base directory of the project
+        # Paths
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-        # Images directory
         self.IMAGES_DIR = BASE_DIR / "static/images"
-
-        # Fonts directory
-        FONTS_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
-
-        # Font sizes
-        LEXEND_DECA_6 = font.Font(family="Lexend Deca", size=6)
-        LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
-
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
 
         # Main Frame
         self.main_frame = tk.Frame(self)
@@ -76,9 +60,9 @@ class FacultyLanding(tk.Toplevel):
         icon_faculty = icon_faculty.resize((50, 50), Image.Resampling.LANCZOS)
         self.icon_faculty = ImageTk.PhotoImage(icon_faculty)
         self.sidebar_canvas.create_image(45, 90, image=self.icon_faculty, anchor=tk.NW)
-        self.sidebar_canvas.create_text(55, 145, text=self.faculty_session["fac_username"], font=LEXEND_DECA_10,
+        self.sidebar_canvas.create_text(55, 145, text=self.faculty_session["fac_username"], font=("Lexend Deca", 10, "bold"),
                                         fill="#FFFFFF", anchor=tk.NW)
-        self.sidebar_canvas.create_text(55, 167, text="FACULTY", font=LEXEND_DECA_6, fill="#FFFFFF", anchor=tk.NW)
+        self.sidebar_canvas.create_text(50, 167, text="FACULTY", font=("Lexend Deca", 6), fill="#FFFFFF", anchor=tk.NW)
 
         # Button images dictionary
         self.button_images = {

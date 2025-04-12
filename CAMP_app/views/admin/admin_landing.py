@@ -1,4 +1,3 @@
-import ctypes
 import tkinter as tk
 from pathlib import Path
 from tkinter import font, messagebox
@@ -20,24 +19,9 @@ class AdminLanding(tk.Toplevel):
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
 
-        # Get the base directory of the project
+        # Paths
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-        # Images directory
         self.IMAGES_DIR = BASE_DIR / "static/images"
-
-        # Fonts directory
-        FONTS_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
-
-        # Font sizes
-        LEXEND_DECA_6 = font.Font(family="Lexend Deca ", size=6)
-        LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
-
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
 
         # Main Frame
         self.main_frame = tk.Frame(self)
@@ -46,11 +30,32 @@ class AdminLanding(tk.Toplevel):
         self.main_frame.rowconfigure(0, minsize=1000)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
+        # self.dict_frames = {}
+        # self.content_frames = (AdminDashboard, AdminFaculty, AdminCourses)
+        #
+        # for CF in self.content_frames:
+        #     frame = CF(self.main_frame, self.main, self)
+        #     self.dict_frames[CF.__name__] = frame
+        #     frame.grid(row=0, column=1, sticky=tk.NSEW)
+
         self.dict_frames = {}
         self.content_frames = (AdminDashboard, AdminFaculty, AdminCourses)
 
+        # First, create a placeholder for AdminFaculty
+        admin_faculty_frame = None
+
         for CF in self.content_frames:
-            frame = CF(self.main_frame, self.main, self)
+            if CF.__name__ == "AdminFaculty":
+                # Initialize AdminFaculty first
+                frame = CF(self.main_frame, self.main, self)
+                admin_faculty_frame = frame
+            elif CF.__name__ == "AdminCourses":
+                # Pass the AdminFaculty frame to AdminCourses
+                frame = CF(self.main_frame, self.main, self, admin_faculty_frame)
+            else:
+                # Normal initialization
+                frame = CF(self.main_frame, self.main, self)
+
             self.dict_frames[CF.__name__] = frame
             frame.grid(row=0, column=1, sticky=tk.NSEW)
 
@@ -76,8 +81,8 @@ class AdminLanding(tk.Toplevel):
         icon_admin = icon_admin.resize((50,50), Image.Resampling.LANCZOS)
         self.icon_admin = ImageTk.PhotoImage(icon_admin)
         self.sidebar_canvas.create_image(45, 90, image=self.icon_admin, anchor=tk.NW)
-        self.sidebar_canvas.create_text(36, 145, text=self.admin_session["adm_username"], font=LEXEND_DECA_10, fill="#FFFFFF", anchor=tk.NW)
-        self.sidebar_canvas.create_text(55, 167, text="ADMIN", font=LEXEND_DECA_6 , fill="#FFFFFF", anchor=tk.NW)
+        self.sidebar_canvas.create_text(36, 145, text=self.admin_session["adm_username"], font=("Lexend Deca", 10, "bold"), fill="#FFFFFF", anchor=tk.NW)
+        self.sidebar_canvas.create_text(55, 167, text="ADMIN", font=("Lexend Deca", 6) , fill="#FFFFFF", anchor=tk.NW)
 
         # Button images dictionary
         self.button_images = {
@@ -96,16 +101,16 @@ class AdminLanding(tk.Toplevel):
         }
 
         # Dashboard button tab
-        self.dashboard_btn = tk.Button(self.sidebar, width=138, height=70, borderwidth=0, image=self.button_images['AdminDashboard']['active'], command=lambda: self.display_frame("AdminDashboard"))
-        self.dashboard_btn.place(x=0, y=200)
+        self.dashboard_btn = tk.Button(self.sidebar, width=137, height=70, borderwidth=0, image=self.button_images['AdminDashboard']['active'], command=lambda: self.display_frame("AdminDashboard"))
+        self.dashboard_btn.place(x=1, y=200)
 
         # Faculty button tab
-        self.faculty_btn = tk.Button(self.sidebar, width=138, height=70, borderwidth=0, image=self.button_images['AdminFaculty']['inactive'], command=lambda: self.display_frame("AdminFaculty"))
-        self.faculty_btn.place(x=0, y=270)
+        self.faculty_btn = tk.Button(self.sidebar, width=137, height=70, borderwidth=0, image=self.button_images['AdminFaculty']['inactive'], command=lambda: self.display_frame("AdminFaculty"))
+        self.faculty_btn.place(x=1, y=270)
 
         # Courses button tab
-        self.courses_btn = tk.Button(self.sidebar, width=138, height=70, borderwidth=0, image=self.button_images['AdminCourses']['inactive'], command=lambda: self.display_frame("AdminCourses"))
-        self.courses_btn.place(x=0, y=340)
+        self.courses_btn = tk.Button(self.sidebar, width=137, height=70, borderwidth=0, image=self.button_images['AdminCourses']['inactive'], command=lambda: self.display_frame("AdminCourses"))
+        self.courses_btn.place(x=1, y=340)
 
         # Logout button
         logout_path = self.IMAGES_DIR / "LogOutButton.png"
@@ -120,7 +125,7 @@ class AdminLanding(tk.Toplevel):
     def load_image(self, filename):
         path = self.IMAGES_DIR / filename
         image = Image.open(path)
-        image = image.resize((142, 72), Image.Resampling.LANCZOS)
+        image = image.resize((141, 72), Image.Resampling.LANCZOS)
         return ImageTk.PhotoImage(image)
 
     def on_close(self):

@@ -1,4 +1,3 @@
-import ctypes
 import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
@@ -14,26 +13,10 @@ class AdminDashboard(tk.Frame):
         super().__init__(parent)
         self.main = main
         self.admin_landing = admin_landing
+
+        # Pathing
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
         IMAGES_DIR = BASE_DIR / "static/images"
-
-        FONT_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONT_DIR / "LexandDeca-Bold.ttf"
-
-        LEXAND_DECA_6 = font.Font(family="Lexand Deca", size=6)
-        LEXAND_DECA_10 = font.Font(family="Lexand Deca", size=10)
-        LEXAND_DECA_12 = font.Font(family="Lexand Deca", size=12)
-        LEXAND_DECA_14 = font.Font(family="Lexand Deca", size=14)
-        LEXAND_DECA_16 = font.Font(family="Lexand Deca", weight="bold", size=16)
-        LEXAND_DECA_18 = font.Font(family="Lexand Deca",weight="bold",  size=18)
-        LEXAND_DECA_20 = font.Font(family="Lexand Deca", size=20)
-        LEXAND_DECA_40 = font.Font(family="Lexand Deca", weight="bold", size=40)
-
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
 
         self.dashboard_canvas = tk.Canvas(self, bg="#D9D9D9", bd=0, highlightthickness=0)
         self.dashboard_canvas.pack(fill=tk.BOTH, expand=True)
@@ -65,6 +48,7 @@ class AdminDashboard(tk.Frame):
         # Admit student button
         self.admit_btn = tk.Button(
             self,
+            width=14,
             text="+ Admit Student",
             bg="#8D0404",
             fg="#FFFFFF",
@@ -76,23 +60,25 @@ class AdminDashboard(tk.Frame):
             command=lambda: self.admit_student()
         )
         self.admit_btn.place(x=444, y=250)
+        self.admit_btn.bind("<Enter>", lambda e: self.admit_btn_hover_effect(e, True))
+        self.admit_btn.bind("<Leave>", lambda e: self.admit_btn_hover_effect(e, False))
 
         # Search bar
-        self.search_var = tk.StringVar()  # Variable to store the entry string
+        self.search_var = tk.StringVar()
         self.search_entry = tk.Entry(
             self,
             textvariable=self.search_var,
-            width=28,
-            bg="#f0f0f0",  # Light gray background
-            fg="#020202",  # Black text
-            relief="flat",  # Flat border for modern look
-            highlightthickness=1,  # Thin outline
-            highlightbackground="#8D0404",  # Border color (unfocused)
-            highlightcolor="#020202",  # Border color (focused)
-            insertbackground="#020202",  # Cursor color
-            font=("Lexend Deca", 8)  # Custom font for consistency
+            width=27,
+            bg="#f0f0f0",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#8D0404",
+            highlightcolor="#020202",
+            insertbackground="#020202",
+            font=("Lexend Deca", 8)
         )
-        self.search_entry.place(x=550,y=250, anchor=tk.NW, height=30)
+        self.search_entry.place(x=556,y=250, anchor=tk.NW, height=30)
 
         # Search Icon
         search_path = IMAGES_DIR / "SearchIcon.png"
@@ -145,18 +131,12 @@ class AdminDashboard(tk.Frame):
 
         self.student_list.tag_configure("row", font=row_font)
 
-        self.student_list.place(x=30,y=302)
+        self.student_list.place(x=30,y=300)
         header_frame.lift()
         self.student_list.bind("<ButtonRelease-1>", self.view_profile)  # When the user clicked the "View Profile"
 
-        # NOTE: Take this back
-        # self.scrollbar = ttk.Scrollbar(self.student_list_frame, orient="vertical", command=self.student_list.yview)
-        # self.student_list.configure(yscrollcommand=self.scrollbar.set)
-
         self.display_students()
-        self.display_data() # Display all data
-        # self.student_list.pack(side="left", fill="both", expand=True)
-        # self.scrollbar.pack(side="right", fill="y") # NOTE: Take this bac
+        self.display_data()
 
 
     def display_data(self):
@@ -187,9 +167,13 @@ class AdminDashboard(tk.Frame):
         return faculty_count
     def admit_student(self):
         self.admin_landing.attributes("-disabled", True) # Disable the interaction
-        self.admin_landing.wait_window(AdmitStudent(self.main, self.admin_landing)) # Wait for the popup
+        self.admin_landing.wait_window(AdmitStudent(self.main, self)) # Wait for the popup
         self.admin_landing.attributes("-disabled", False) # Re-enable the interaction
         self.admin_landing.focus_force() # Regain focus on the parent window
+
+    def admit_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.admit_btn.config(background=new_color)
 
     def display_students(self):
         self.all_students = self.main.admin_model.get_students() # Get and store the students

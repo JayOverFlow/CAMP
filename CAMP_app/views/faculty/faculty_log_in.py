@@ -1,7 +1,6 @@
-import ctypes
 import tkinter as tk
 from pathlib import Path
-from tkinter import messagebox, font, ttk
+from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
 
 
@@ -12,26 +11,16 @@ class FacultyLogIn(tk.Frame):
         self.canvas = tk.Canvas(self, bd=0, highlightthickness=0)
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
-        # Get the base directory of the project
-        BASE_DIR = Path(__file__).resolve().parent.parent.parent  # Moves up two levels from "views"
-
-        # Images directory
+        # Paths
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
         IMAGES_DIR = BASE_DIR / "static/images"
 
-        # Fonts directory
-        FONTS_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
-        # Font sizes
-        LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
-        LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
-        LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
-        LEXEND_DECA_16 = font.Font(family="Lexend Deca", size=16)
-        LEXEND_DECA_18 = font.Font(family="Lexend Deca", size=18)
-        LEXEND_DECA_20 = font.Font(family="Lexend Deca", size=20)
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
+        # Background
+        bg_path = IMAGES_DIR / "home_screen_bg.png"  # Get the path of a specific image
+        bg = Image.open(bg_path)  # Load the img file
+        bg = bg.resize((1000, 600), Image.Resampling.LANCZOS)  # Resize the img
+        self.bg = ImageTk.PhotoImage(bg)  # Convert into Python Object
+        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.bg)  # Put the widget
 
         # CAMP Red Typography
         camp_typography = IMAGES_DIR / "CAMPRedTypography.png"
@@ -54,13 +43,13 @@ class FacultyLogIn(tk.Frame):
         self.camp_logo = ImageTk.PhotoImage(camp_logo)
         self.canvas.create_image(670, 85, image=self.camp_logo, anchor=tk.NW)
 
-        self.canvas.create_text(600, 250, anchor=tk.NW, text="Faculty Username:", font=LEXEND_DECA_12, fill="#FFFFFF")
+        self.canvas.create_text(600, 250, anchor=tk.NW, text="Faculty Username:", font=("Lexend Deca", 12, "bold"), fill="#FFFFFF")
 
         self.faculty_username_entry = ttk.Entry(self)  # pass self
         self.faculty_username_entry.place(anchor=tk.NW, x=600, y=280, width=300, height=35)
         self.faculty_username_entry.bind("<Return>", self.log_in)
 
-        self.canvas.create_text(600, 320, anchor=tk.NW, text="Password:", font=LEXEND_DECA_12, fill="#FFFFFF")
+        self.canvas.create_text(600, 320, anchor=tk.NW, text="Password:", font=("Lexend Deca", 12, "bold"), fill="#FFFFFF")
 
         self.faculty_password_entry = ttk.Entry(self, show="*")  # pass self
         self.faculty_password_entry.place(anchor=tk.NW, x=600, y=350, width=300, height=35)
@@ -70,7 +59,7 @@ class FacultyLogIn(tk.Frame):
 
         style.configure(
             'btnStyle.TButton',
-            font=LEXEND_DECA_12,
+            font=("Lexend Deca", 12, "bold"),
             relief="solid",
             borderwidth=5,
             background="#7B1818",

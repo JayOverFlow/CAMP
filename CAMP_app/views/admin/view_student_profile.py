@@ -274,9 +274,13 @@ class ViewStudentProfile(tk.Toplevel):
         confirm = messagebox.askyesno("Expel Student?", f"Are you sure you want to expel {self.student_data["stu_full_name"]}?")
         if confirm:
             self.main.admin_model.expel_student(self.student_data["stu_id"])
-            messagebox.showinfo("Expel Student", f"{self.student_data["stu_full_name"]} has been expelled.")
-            self.destroy()
             self.admin_dashboard.display_students()
+            search_bar = self.admin_dashboard.search_entry
+            if search_bar.get():
+                search_bar.delete("0", tk.END)
+                search_bar.focus_set()
+            self.destroy()
+            messagebox.showinfo("Expel Student", f"{self.student_data["stu_full_name"]} has been expelled.")
 
     def toggle_edit_btn(self):
         if not self.is_edit_mode:
