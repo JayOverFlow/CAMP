@@ -15,7 +15,7 @@ class AdmitStudent(tk.Toplevel):
         self.geometry("932x320+155+180")
         self.resizable(False, False)
 
-        self.main_frame = tk.Frame(self)
+        self.main_frame = tk.Frame(self, bg="#FFFFFF")
         self.main_frame.pack(fill="both", expand=True)
 
         self.fields_max_length = {
@@ -40,7 +40,7 @@ class AdmitStudent(tk.Toplevel):
 
 
         # First name
-        tk.Label(self.main_frame, text="First Name", font=lbl_font, fg="#020202").place(x=20, y=55)
+        tk.Label(self.main_frame, text="First Name", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=55)
         self.first_name = tk.Entry(
             self,
             width=28,
@@ -56,7 +56,7 @@ class AdmitStudent(tk.Toplevel):
         self.first_name.place(x=22, y=78)
 
         # Middle name
-        tk.Label(self.main_frame, text="Middle Name", font=lbl_font, fg="#020202").place(x=20, y=108)
+        tk.Label(self.main_frame, text="Middle Name", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=108)
         self.middle_name = tk.Entry(
             self,
             width=28,
@@ -72,7 +72,7 @@ class AdmitStudent(tk.Toplevel):
         self.middle_name.place(x=22, y=131)
 
         # Last name
-        tk.Label(self.main_frame, text="Last Name", font=lbl_font, fg="#020202").place(x=20, y=161)
+        tk.Label(self.main_frame, text="Last Name", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=161)
         self.last_name = tk.Entry(
             self,
             width=28,
@@ -88,7 +88,7 @@ class AdmitStudent(tk.Toplevel):
         self.last_name.place(x=22, y=184)
 
         # Sex
-        sex_lbl = tk.Label(self.main_frame, text="Sex", font=lbl_font, fg="#020202")
+        sex_lbl = tk.Label(self.main_frame, text="Sex", font=lbl_font, fg="#020202", bg="#FFFFFF")
         sex_lbl.place(x=20, y=214)
         sex_lbl.lower()
         self.sex_var = tk.StringVar()
@@ -123,7 +123,7 @@ class AdmitStudent(tk.Toplevel):
         self.sex_dropdown.lift()
 
         # Birthdate
-        tk.Label(self.main_frame, text="Birthdate", font=lbl_font, fg="#020202").place(x=120, y=214)
+        tk.Label(self.main_frame, text="Birthdate", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=120, y=214)
 
         self.birthdate = DateEntry(
             self.main_frame,
@@ -146,7 +146,7 @@ class AdmitStudent(tk.Toplevel):
         self.birthdate.delete(0, tk.END)
 
         # Citizenship
-        tk.Label(self.main_frame, text="Citizenship", font=lbl_font, fg="#020202").place(x=250, y=55)
+        tk.Label(self.main_frame, text="Citizenship", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=55)
         self.citizenship = tk.Entry(
             self,
             width=28,
@@ -162,7 +162,7 @@ class AdmitStudent(tk.Toplevel):
         self.citizenship.place(x=252, y=78)
 
         # LRN
-        tk.Label(self.main_frame, text="LRN", font=lbl_font, fg="#020202").place(x=250, y=108)
+        tk.Label(self.main_frame, text="LRN", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=108)
         self.lrn = tk.Entry(
             self,
             width=28,
@@ -178,7 +178,7 @@ class AdmitStudent(tk.Toplevel):
         self.lrn.place(x=252, y=131)
 
         # Phone
-        tk.Label(self.main_frame, text="Phone Number", font=lbl_font, fg="#020202").place(x=250, y=161)
+        tk.Label(self.main_frame, text="Phone Number", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=161)
         self.phone = tk.Entry(
             self,
             width=28,
@@ -194,7 +194,7 @@ class AdmitStudent(tk.Toplevel):
         self.phone.place(x=252, y=184)
 
         # Email
-        tk.Label(self.main_frame, text="Email", font=lbl_font, fg="#020202").place(x=250, y=214)
+        tk.Label(self.main_frame, text="Email", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=214)
         self.email = tk.Entry(
             self,
             width=28,
@@ -210,7 +210,7 @@ class AdmitStudent(tk.Toplevel):
         self.email.place(x=252, y=237)
 
         # Username
-        tk.Label(self.main_frame, text="Username", font=lbl_font, fg="#020202").place(x=480, y=55)
+        tk.Label(self.main_frame, text="Username", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=480, y=55)
         self.username = tk.Entry(
             self,
             width=28,
@@ -226,7 +226,7 @@ class AdmitStudent(tk.Toplevel):
         self.username.place(x=482, y=78)
 
         # Religion
-        tk.Label(self.main_frame, text="Religion", font=lbl_font, fg="#020202").place(x=710, y=55)
+        tk.Label(self.main_frame, text="Religion", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=710, y=55)
         self.religion = tk.Entry(
             self,
             width=28,
@@ -242,7 +242,7 @@ class AdmitStudent(tk.Toplevel):
         self.religion.place(x=712, y=78)
 
         # Password
-        tk.Label(self.main_frame, text="Password", font=lbl_font, fg="#020202").place(x=480, y=108)
+        tk.Label(self.main_frame, text="Password", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=480, y=108)
         self.password = tk.Entry(
             self,
             width=28,
@@ -258,7 +258,7 @@ class AdmitStudent(tk.Toplevel):
         self.password.place(x=482, y=131)
 
         # Confirm Password
-        tk.Label(self.main_frame, text="Confirm Password", font=lbl_font, fg="#020202").place(x=710, y=108)
+        tk.Label(self.main_frame, text="Confirm Password", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=710, y=108)
         self.confirm_password = tk.Entry(
             self,
             width=28,
@@ -274,7 +274,7 @@ class AdmitStudent(tk.Toplevel):
         self.confirm_password.place(x=712, y=131)
 
         # Address
-        tk.Label(self.main_frame, text="Address", font=lbl_font, fg="#020202").place(x=480, y=161)
+        tk.Label(self.main_frame, text="Address", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=480, y=161)
         self.address = tk.Text(
             self.main_frame,
             width=61,

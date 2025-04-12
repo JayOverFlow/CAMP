@@ -1,10 +1,10 @@
-import ctypes
-import re
+import datetime
 import tkinter as tk
 from pathlib import Path
 from tkinter import ttk, messagebox, font, filedialog
 
 from PIL import Image, ImageTk, ImageDraw
+from tkcalendar import DateEntry
 
 
 class ViewStudentProfile(tk.Toplevel):
@@ -13,193 +13,295 @@ class ViewStudentProfile(tk.Toplevel):
         self.main = main
         self.admin_dashboard = admin_dashboard
         self.student_data = student_data
-        self.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.protocol("WM_DELETE_WINDOW", self.close)
 
         self.title("Student Profile")
-        self.geometry("700x500+285+60")
+        self.geometry("650x480+360+100")
         self.resizable(False, False)
-        self.configure(bg="#FFFFFF")
 
-        # Get the base directory of the project
-        BASE_DIR = Path(__file__).resolve().parent.parent.parent  # Moves up two levels from "views"
-
-        # Images directory
+        # Paths
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
         IMAGES_DIR = BASE_DIR / "static/images"
-
-        # Fonts directory
-        FONTS_DIR = BASE_DIR / "static/fonts"
-        FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
-        # Font sizes
-        LEXEND_DECA_7 = font.Font(family="Lexend Deca", size=7)
-        LEXEND_DECA_10 = font.Font(family="Lexend Deca", size=10)
-        LEXEND_DECA_12 = font.Font(family="Lexend Deca", size=12)
-        LEXEND_DECA_14 = font.Font(family="Lexend Deca", size=14)
-        LEXEND_DECA_16 = font.Font(family="Lexend Deca", size=16)
-        LEXEND_DECA_18 = font.Font(family="Lexend Deca", size=18)
-        LEXEND_DECA_20 = font.Font(family="Lexend Deca", size=20)
-        try:
-            ctypes.windll.gdi32.AddFontResourceW(str(FONT_PATH))
-        except Exception as e:
-            print(f"Error loading font: {e}")
-
-        # Student pfp directory
-        PFP_DIR = BASE_DIR / "static/student_pfps"
+        self.PFP_DIR = BASE_DIR / "static/student_pfps"
 
         # Main Frame
         self.main_frame = tk.Frame(self, bg="#FFFFFF")
-        # self.main_frame.rowconfigure(0, minsize=25)
-        # self.main_frame.rowconfigure(1, minsize=25)
-        # self.main_frame.columnconfigure(0, minsize=50)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
         self.main_frame.pack_propagate(False)
 
-        self.main_frame_canvas = tk.Canvas(self.main_frame, bg="#000000")
-        self.main_frame_canvas.pack(fill=tk.BOTH, expand=True)
+        # Header
+        header_frame = tk.Frame(self.main_frame, bg="#8D0404", width=700, height=40)
+        header_frame.place(x=0, y=0)
+        header_frame.pack_propagate(False)
+        tk.Label(header_frame, text="Student Profile", font=("Lexend Deca", 16, "bold"), fg="#FFFFFF",
+                 bg="#8D0404", anchor="w").pack(fill="x", expand=True, padx=30)
 
+        # Canvas
+        self.canvas = tk.Canvas(self.main_frame, bd=0, highlightthickness=0, bg="#FFFFFF", width=700, height=162)
+        self.canvas.place(x=0, y=40)
 
-        self.style = ttk.Style(self.main_frame)
-        # self.style.theme_use("clam")
-        self.style.configure("TEntry", bg="#FFFFFF", fg="#8D0404", font=LEXEND_DECA_10)
-        self.style.configure("TName", fg="#8D0404", font=LEXEND_DECA_16)
-        self.style.configure("Tid", fg="#8D0404", font=LEXEND_DECA_10)
-        self.style.configure("TButton",font=LEXEND_DECA_7, fg="#FFFFFF", bg="#8D0404")
-        self.style.map("TButton", foreground=[("active","#FFFFFF"),("pressed","#FFFFFF")], background=[("active", "#8D0404"), ("pressed","#8D0404")])
-
-        # Header Frame
-        self.header_frame = tk.Frame(self.main_frame, width=700, height=150)
-        self.header_frame.grid(row=0, column=0, sticky=tk.NSEW)
-        self.header_frame.pack_propagate(False)
-
-        # Canvas for header_frame
-        self.header_frame_canvas = tk.Canvas(self.header_frame, bg="#FFFFFF")
-        self.header_frame_canvas.pack(fill=tk.BOTH, expand=True)
-
-        # Student pfp
-        pfp_path = self.get_pfp_path(PFP_DIR, self.student_data["stu_id"])  # Get student pfp
+        # Student PFP
+        pfp_path = self.get_pfp_path(self.student_data["stu_id"])
         self.pfp = self.make_pfp_circle(pfp_path)
-        # self.header_frame_canvas.create_image(50, 20, anchor=tk.NW, image=self.pfp)
-        self.pfp_label = tk.Label(self, image=self.pfp, bg="#FFFFFF", borderwidth=0)
-        self.pfp_label.image = self.pfp
-        self.pfp_label.place(x=50, y=20)  # Adjust x, y for centering and floating effect
+        self.canvas.create_image(30, 20, anchor=tk.NW, image=self.pfp)
 
+        # Upload Button
+        upload_path = IMAGES_DIR / "UploadButton.png"
+        upload_icon = Image.open(upload_path)
+        upload_icon = upload_icon.resize((26, 26), Image.Resampling.LANCZOS)
+        self.upload_icon = ImageTk.PhotoImage(upload_icon)
+        self.upload_btn = self.canvas.create_image(150, 140, image=self.upload_icon)
+        self.canvas.tag_bind(self.upload_btn, "<ButtonRelease-1>", self.upload_pfp)
 
         # Full Name
-        self.header_frame_canvas.create_text(210, 100, text=student_data["stu_full_name"], fill="#8D0404", font=LEXEND_DECA_16, anchor="w")
+        self.canvas.create_text(180, 80, text=self.student_data["stu_full_name"], fill="#8D0404",font=("Lexend Deca", 20, "bold"), anchor="w")
 
         # ID
-        self.header_frame_canvas.create_text(235, 120, text=f"AU{student_data["stu_id"]}", fill="#8D0404", font=LEXEND_DECA_10)
+        self.canvas.create_text(180, 110, text=f"AU{self.student_data["stu_id"]}", fill="#020202",font=("Lexend Deca", 14, "bold"), anchor="w")
 
         # Expel Button
-        self.expel_btn = ttk.Button(self.header_frame, text="Expel Student", command=self.expel_student)
-        self.header_frame_canvas.create_window(610, 120, window=self.expel_btn)
+        self.expel_btn = tk.Button(
+            self.canvas,
+            width=14,
+            text="Expel Student",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 6, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=self.expel_student
+        )
+        self.canvas.create_window(554, 110, window=self.expel_btn)
+        self.expel_btn.bind("<Enter>", lambda e: self.expel_btn_hover_effect(e, True))
+        self.expel_btn.bind("<Leave>", lambda e: self.expel_btn_hover_effect(e, False))
 
-        # Entries Frame
-        self.entries_frame = tk.Frame(self.main_frame, width=700, height=400, bg="#FFFFFF")
-        # Rows
-        self.entries_frame.rowconfigure(0, minsize=23)
-        self.entries_frame.rowconfigure(1, minsize=45)
-        self.entries_frame.rowconfigure(2, minsize=45)
-        self.entries_frame.rowconfigure(3, minsize=45)
-        self.entries_frame.rowconfigure(4, minsize=45)
-        self.entries_frame.rowconfigure(5, minsize=45)
-        self.entries_frame.rowconfigure(6, minsize=45)
-        self.entries_frame.rowconfigure(7, minsize=45)
-        # Columns
-        self.entries_frame.columnconfigure(0, minsize=165)
-        self.entries_frame.columnconfigure(1, minsize=165)
-        self.entries_frame.columnconfigure(2, minsize=165)
-        self.entries_frame.columnconfigure(3, minsize=165)
-        self.entries_frame.grid(row=1, column=0, sticky=tk.NSEW)
-        self.entries_frame.grid_propagate(False)
+        # Line
+        self.canvas.create_line(180, 134, 594, 134, fill="#D9D9D9", width=2)
 
-        # Canvas for entries_frame
-        self.entries_frame_canvas = tk.Canvas(self.entries_frame, bg="#FFFFFF")
-        self.entries_frame_canvas.place(x=0, y=0, relwidth=1, relheight=1)
+        # Fonts
+        lbl_font = font.Font(family="Lexend Deca", size=10, weight="bold")
+        entry_font = font.Font(family="Lexend Deca", size=8)
 
         # Username
-        self.entries_frame_canvas.create_text(80, 43, text="Username: ", font=LEXEND_DECA_10)
-        self.username = ttk.Entry(self.entries_frame, width=25)
-        self.username.grid(row=1, column=1, ipady=4)
+        tk.Label(self.main_frame, text="Username:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=210)
+        self.username = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",  # Black text
+            relief="flat",  # Flat border for modern look
+            highlightthickness=1,  # Thin outline
+            highlightbackground="#020202",  # Border color (unfocused)
+            highlightcolor="#8D0404",  # Border color (focused)
+            insertbackground="#020202",  # Cursor color
+            font=entry_font,
+        )
+        self.username.place(x=110, y=213)
 
         # Password
-        self.entries_frame_canvas.create_text(79, 88, text="Password: ", font=LEXEND_DECA_10)
-        self.password= ttk.Entry(self.entries_frame, width=25)
-        self.password.grid(row=2, column=1, ipady=4)
+        tk.Label(self.main_frame, text="Password:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=253)
+        self.password = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.password.place(x=110, y=256)
 
         # Birthdate
-        self.entries_frame_canvas.create_text(80, 133, text="Birthdate: ", font=LEXEND_DECA_10)
-        self.birthdate = ttk.Entry(self.entries_frame, width=25)
-        self.birthdate.grid(row=3, column=1, ipady=4)
+        tk.Label(self.main_frame, text="Birthdate:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=296)
+        self.birthdate = DateEntry(
+            self.main_frame,
+            width=10,
+            background="#8D0404",
+            foreground="#FFFFFF",
+            borderwidth=0,
+            date_pattern="yyyy-mm-dd",
+            headersbackground="#8D0404",
+            headersforeground="#FFFFFF",
+            selectbackground="#8D0404",
+            selectforeground="#FFFFFF",
+            normalbackground="#FFFFFF",
+            normalforeground="#333333",
+            weekendbackground="#F5F5F5",
+            weekendforeground="#8D0404",
+            font=("Lexend Deca", 8),
+        )
+        self.birthdate.place(x=110, y=299)
+        self.birthdate.delete(0, tk.END) # NOTE: Initially insert the student's data
 
-        # Phone
-        self.entries_frame_canvas.create_text(70, 178, text="Phone: ", font=LEXEND_DECA_10)
-        self.phone = ttk.Entry(self.entries_frame, width=25)
-        self.phone.grid(row=4, column=1, ipady=4)
+        # Phone Number
+        tk.Label(self.main_frame, text="Phone Num:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=339)
+        self.phone = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.phone.place(x=110, y=342)
 
         # Email Address
-        self.entries_frame_canvas.create_text(95, 223, text="Email Address: ", font=LEXEND_DECA_10)
-        self.email = ttk.Entry(self.entries_frame, width=25)
-        self.email.grid(row=5, column=1, ipady=4)
-
-        # Address
-        self.entries_frame_canvas.create_text(73, 268, text="Address: ", font=LEXEND_DECA_10)
-        self.address = ttk.Entry(self.entries_frame, width=81)
-        self.address.grid(row=6, column=1, columnspan=3, ipady=4)
+        tk.Label(self.main_frame, text="Email:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=382)
+        self.email = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.email.place(x=110, y=385)
 
         # LRN
-        self.entries_frame_canvas.create_text(385, 43, text="LRN: ", font=LEXEND_DECA_10)
-        self.lrn = ttk.Entry(self.entries_frame, width=25)
-        self.lrn.grid(row=1, column=3, ipady=4)
+        tk.Label(self.main_frame, text="Student LRN:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=320, y=210)
+        self.lrn = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.lrn.place(x=420, y=213)
 
         # Citizenship
-        self.entries_frame_canvas.create_text(405, 88, text="Citizenship: ", font=LEXEND_DECA_10)
-        self.citizenship = ttk.Entry(self.entries_frame, width=25)
-        self.citizenship.grid(row=2, column=3, ipady=4)
+        tk.Label(self.main_frame, text="Citizenship:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=320, y=253)
+        self.citizenship = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.citizenship.place(x=420, y=256)
 
         # Religion
-        self.entries_frame_canvas.create_text(395, 133, text="Religion: ", font=LEXEND_DECA_10)
-        self.religion = ttk.Entry(self.entries_frame, width=25)
-        self.religion.grid(row=3, column=3, ipady=4)
+        tk.Label(self.main_frame, text="Religion:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=320, y=296)
+        self.religion = tk.Entry(
+            self,
+            width=24,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font,
+        )
+        self.religion.place(x=420, y=299)
 
         # Sex
-        self.entries_frame_canvas.create_text(380, 178, text="Sex: ", font=LEXEND_DECA_10)
-        # self.sex = ttk.Entry(self.entries_frame)
-        # self.sex.grid(row=3, column=3)
+        tk.Label(self.main_frame, text="Sex:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=320, y=339)
+        self.sex = ttk.Combobox(self.main_frame, values=["Female", "Male"], width=25)
+        self.sex.place(x=420, y=342)
 
-        self.sex = ttk.Combobox(self.entries_frame, values=["Female", "Male"], width=24)
-        self.sex.grid(row=4, column=3, ipady=4)
+        # Address
+        tk.Label(self.main_frame, text="Address:", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=320, y=382)
+        self.address = tk.Text(
+            self.main_frame,
+            width=24,
+            height=2,
+            bg="#FFFFFF",
+            fg="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
+            font=entry_font
+        )
+        self.address.place(x=420, y=385)
+
+        # Update Profile Button
+        self.update_btn = tk.Button(
+            self.main_frame,
+            width=14,
+            text="Update Profile",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 8, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=self.toggle_update_btn
+        )
+        self.update_btn.place(x=486, y=440)
+        self.update_btn.bind("<Enter>", lambda e: self.update_btn_hover_effect(e, True))
+        self.update_btn.bind("<Leave>", lambda e: self.update_btn_hover_effect(e, False))
+
+        # Mode Variable
+        self.is_update_mode = False
+
+        # Close Button
+        self.close_btn = tk.Button(
+            self.main_frame,
+            width=14,
+            text="Close",
+            bg="#8D0404",
+            fg="#FFFFFF",
+            font=("Lexend Deca", 8, "bold"),
+            activebackground="#6C0303",
+            activeforeground="#FFFFFF",
+            relief="flat",
+            cursor="hand2",
+            command=self.close # NOTE: Change this
+        )
+        self.close_btn.place(x=360, y=440)
+        self.close_btn.bind("<Enter>", lambda e: self.close_btn_hover_effect(e, True))
+        self.close_btn.bind("<Leave>", lambda e: self.close_btn_hover_effect(e, False))
 
         self.load_student_data()
 
-        # Edit Button
-        self.is_edit_mode = False
-        self.edit_btn = ttk.Button(self.entries_frame, text="Update Profile", command=self.toggle_edit_btn)
-        self.entries_frame_canvas.create_window(618, 315, window=self.edit_btn)
+    def expel_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.expel_btn.config(background=new_color)
 
-        # Upload button
-        self.upload_btn = tk.Button(self, text="📷", command=lambda: self.upload_pfp(PFP_DIR),font=LEXEND_DECA_10)
-        self.upload_btn.place(x=165, y=110)  # Adjust position relative to pfp_label
+    def update_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.update_btn.config(background=new_color)
 
-        self.pfp_label.lift()  # Moves it above other widgets
-        self.upload_btn.lift()
+    def close_btn_hover_effect(self, event, hover_in):
+        new_color = "#B30505" if hover_in else "#8D0404"
+        self.close_btn.config(background=new_color)
 
-        self.load_student_data()
-
-        # # Close Button
-        # self.close_btn = tk.Button(self.entries_frame, text="Close", command=self.on_close)
-        # self.close_btn.grid(row=6, column=2)
-
-
-
-    def get_pfp_path(self, PFP_DIR, stu_id):
-        pfp_path = PFP_DIR / f"student_{stu_id}.png"
-        default_pfp = PFP_DIR / "student_default.png"
+    def get_pfp_path(self, stu_id):
+        pfp_path = self.PFP_DIR / f"student_{stu_id}.png"
+        default_pfp = self.PFP_DIR / "student_default.png"
         return pfp_path if pfp_path.exists() else default_pfp # Checks if the file actually exists in the directory, otherwise it will return None
 
     def make_pfp_circle(self, pfp_path):
-        size = (150, 150)
+        size = (140, 140)
         pfp = Image.open(pfp_path).convert("RGBA")
-        pfp = pfp.resize(size, Image.Resampling.LANCZOS) # Open image and ensure transparency support
+        pfp = pfp.resize(size, Image.Resampling.LANCZOS)  # Open image and ensure transparency support
 
         # Create circular mask
         mask = Image.new("L", size, 0)
@@ -207,12 +309,15 @@ class ViewStudentProfile(tk.Toplevel):
         draw.ellipse((1, 1, size[0] - 1, size[1] - 1), fill=255)  # Draw a filled circle
 
         # Apply the mask
-        circular_pfp = Image.new("RGBA", size, (0, 0, 0, 0)) # Transparent BG
+        circular_pfp = Image.new("RGBA", size, (0, 0, 0, 0))  # Transparent BG
         circular_pfp.paste(pfp, (0, 0), mask)
+
+        border_draw = ImageDraw.Draw(circular_pfp)
+        border_draw.ellipse((1, 1, size[0] - 1, size[1] - 1), outline="#8D0404", width=3)
 
         return ImageTk.PhotoImage(circular_pfp)
 
-    def upload_pfp(self, PFP_DIR):
+    def upload_pfp(self, event):
         file_path = filedialog.askopenfilename(
             filetypes=[("Image Files", "*.jpg;*.jpeg;*.png")]
         )
@@ -229,7 +334,7 @@ class ViewStudentProfile(tk.Toplevel):
         try:
             # Define new filename and path
             new_filename = f"student_{self.student_data['stu_id']}.png"
-            new_filepath = PFP_DIR / new_filename
+            new_filepath = self.PFP_DIR / new_filename
 
             # Convert and save image as PNG
             img = Image.open(file_path).convert("RGBA")
@@ -240,8 +345,9 @@ class ViewStudentProfile(tk.Toplevel):
 
             # Reload the updated image
             self.pfp = self.make_pfp_circle(new_filepath)
-            self.header_frame_canvas.create_image(48, 48, anchor=tk.NW, image=self.pfp)
-            self.header_frame_canvas.image = self.pfp  # Keep reference to prevent garbage collection
+            self.canvas.create_image(30, 20, anchor=tk.NW, image=self.pfp)
+            self.canvas.tag_raise(self.upload_btn)
+            self.canvas.image = self.pfp  # Keep reference to prevent garbage collection
 
             messagebox.showinfo("Success", "Profile picture updated successfully!")
 
@@ -249,133 +355,151 @@ class ViewStudentProfile(tk.Toplevel):
             messagebox.showerror("Error", f"Failed to upload profile picture: {e}")
 
     def load_student_data(self):
-        self.entries = {
-            "stu_username": self.username,
-            "stu_password": self.password,
-            "stu_birthdate": self.birthdate,
-            "stu_phone_number": self.phone,
-            "stu_emailadd": self.email,
-            "stu_address": self.address,
-            "stu_lrn": self.lrn,
-            "stu_citizenship": self.citizenship,
-            "stu_religion": self.religion,
-            "stu_sex": self.sex
+        # Map student_data keys to their corresponding widget variables
+        self.field_widgets = {
+            'stu_birthdate': self.birthdate,
+            'stu_sex': self.sex,  # Combobox
+            'stu_username': self.username,
+            'stu_password': self.password,
+            'stu_phone_number': self.phone,
+            'stu_lrn': self.lrn,
+            'stu_citizenship': self.citizenship,
+            'stu_emailadd': self.email,
+            'stu_religion': self.religion,
+            'stu_address': self.address,  # Text widget
         }
 
-        # Insert student's data into entries and disable after
-        for key, entry in self.entries.items():
-            if entry == "self.sex":
-                entry.set(self.student_data[key])
-                entry.state(tk.DISABLED)
-            entry.insert(0, self.student_data[key])
-            entry.configure(state=tk.DISABLED)
+        for key, widget in self.field_widgets.items():
+            value = self.student_data.get(key, "")
+
+
+            if key == 'stu_birthdate' and isinstance(value, (str, int, float)) is False:
+                value = str(value)
+
+            if isinstance(widget, tk.Entry):
+                widget.insert(0, value)
+                widget.config(state='disabled')  # Disable the entry
+
+            elif isinstance(widget, tk.Text):
+                widget.insert("1.0", value)
+                widget.config(state='disabled')  # Disable the text widget
+
+            elif isinstance(widget, ttk.Combobox):
+                widget.set(value)
+                widget.state(['disabled'])  # Disable the combobox
 
     def expel_student(self):
         confirm = messagebox.askyesno("Expel Student?", f"Are you sure you want to expel {self.student_data["stu_full_name"]}?")
         if confirm:
             self.main.admin_model.expel_student(self.student_data["stu_id"])
             self.admin_dashboard.display_students()
-            search_bar = self.admin_dashboard.search_entry
+            search_bar = self.admin_dashboard.search
             if search_bar.get():
                 search_bar.delete("0", tk.END)
                 search_bar.focus_set()
             self.destroy()
             messagebox.showinfo("Expel Student", f"{self.student_data["stu_full_name"]} has been expelled.")
 
-    def toggle_edit_btn(self):
-        if not self.is_edit_mode:
-            self.is_edit_mode = True
-            self.edit_btn.config(text="Save")
-            for entry in self.entries.values():
+    def toggle_update_btn(self):
+        if not self.is_update_mode:
+            self.is_update_mode = True
+            self.update_btn.config(text="Save")
+            for entry in self.field_widgets.values():
                 entry.config(state=tk.NORMAL)
 
         else:  # Save
-            updated_data = self.get_entries_values()
+            updated_data = self.get_fields_values()
 
             # Validate inputs before saving
-            if self.validate_update(self.entries):
-                self.is_edit_mode = False
-                self.edit_btn.config(text="Update Profile")
+            if self.validate_update(self.field_widgets):
+                self.is_update_mode = False
+                self.update_btn.config(text="Update Profile")
                 self.save_changes(updated_data)
 
                 # Disable entries
-                for entry in self.entries.values():
+                for entry in self.field_widgets.values():
                     entry.config(state=tk.DISABLED)
 
                 messagebox.showinfo("Student Updated", "Student Profile Updated")
 
-    def get_entries_values(self):
-        updated_data = {key: entry.get() for key, entry in self.entries.items()}
+    def get_fields_values(self):
+        updated_data = {}
+
+        for key, widget in self.field_widgets.items():
+            if isinstance(widget, tk.Entry) or isinstance(widget, ttk.Combobox):
+                updated_data[key] = widget.get()
+            elif isinstance(widget, tk.Text):
+                updated_data[key] = widget.get("1.0", "end-1c").strip()  # strip to remove trailing newline
+
         return updated_data
 
-    def validate_update(self, entries):
-        errors = []
+    def validate_update(self, fields):
+        error = []
 
-        # Define max lengths for fields
+        for key, widget in fields.items():
+            if isinstance(widget, tk.Text):
+                value = widget.get("1.0", tk.END).strip()
+            else:
+                value = widget.get().strip()
+            if not value:
+                messagebox.showerror("Validation Error", "All fields can't be empty.")
+                return None
+
+        updated_data = {}
+        for key, widget in fields.items():
+            if isinstance(widget, tk.Text):
+                updated_data[key] = widget.get("1.0", tk.END).strip()
+            else:
+                updated_data[key] = widget.get().strip()
+
         fields_max_length = {
-            "Username": 50,
-            "Password": 10,
-            "Birthdate": 8,  # YY-MM-DD format
-            "Phone": 11,
-            "Email": 50,
-            "Address": 150,
-            "LRN": 12,
-            "Citizenship": 30,
-            "Religion": 70,
-            "Sex": 6,  # "Female" or "Male"
+            "username": 50,
+            "password": 10,
+            "birthdate": 10,  # Format: YYYY-MM-DD
+            "phone": 11,
+            "email": 50,
+            "address": 150,
+            "lrn": 12,
+            "citizenship": 30,
+            "religion": 70,
+            "sex": 6,
         }
 
-        # Define valid email domains
-        valid_email_domains = ["@email.com", "@gmail.com", "@yahoo.com", "@mail.com"]
+        # if self.main.admin_model.is_student_username_taken(updated_data["stu_username"]):
+        #     error.append("Username is already taken.")
 
-        # Validation checks
-        for field, entry in entries.items():
-            value = entry.get().strip()
+        if not updated_data["stu_phone_number"].isdigit() or len(updated_data["stu_phone_number"]) != 11:
+            error.append("Phone must be exactly 11 digits.")
 
-            # Check if the field is empty
-            if not value:
-                errors.append(f"{field.replace('stu_', '').capitalize()} cannot be empty.")
-                continue  # Skip further checks for empty fields
+        if not any(updated_data["stu_emailadd"].endswith(domain) for domain in
+                   ["@email.com", "@gmail.com", "@yahoo.com", "@mail.com"]):
+            error.append("Email must end with a valid domain (@email.com, @gmail.com, etc.).")
 
-            # Check max length
-            if field in fields_max_length and len(value) > fields_max_length[field]:
-                errors.append(
-                    f"{field.replace('stu_', '').capitalize()} exceeds max length ({fields_max_length[field]}).")
+        if not updated_data["stu_lrn"].isdigit() or len(updated_data["stu_lrn"]) != 12:
+            error.append("LRN must be exactly 12 digits.")
 
-            # Birthdate format validation
-            if field == "stu_birthdate":
-                if not re.fullmatch(r"\d{2}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}", value):
-                    errors.append("Birthdate must be in YY-MM-DD or YYYY-MM-DD format.")
+        if updated_data["stu_sex"] not in ["Male", "Female"]:
+            error.append("Sex must be either 'Male' or 'Female'.")
 
-            # Ensure phone and LRN contain only numbers
-            if field in ["stu_phone_number", "stu_lrn"]:
-                if not value.isdigit():
-                    errors.append(f"{field.replace('stu_', '').capitalize()} must contain only numbers.")
+        for field, max_len in fields_max_length.items():
+            value = updated_data.get(field, "")
+            if len(value) > max_len:
+                error.append(f"{field.capitalize()} exceeds max length of {max_len} characters.")
 
-            # Ensure stu_phone_number is exactly 11 digits
-            if field == "stu_phone_number":
-                if not (value.isdigit() and len(value) == fields_max_length["Phone"]):
-                    errors.append("Phone number must be exactly 11 digits.")
+        try:
+            birthdate = datetime.datetime.strptime(updated_data["stu_birthdate"], "%Y-%m-%d").date()
+            today = datetime.date.today()
+            age = (today - birthdate).days // 365
+            if age < 18:
+                error.append("Student must be at least 18 years old.")
+        except ValueError:
+            error.append("Birthdate must be in YYYY-MM-DD format.")
 
-            # Ensure stu_lrn is exactly 12 digits
-            if field == "stu_lrn":
-                if not (value.isdigit() and len(value) == fields_max_length["LRN"]):
-                    errors.append("LRN must be exactly 12 digits.")
+        if error:
+            messagebox.showerror("Validation Error", "\n".join(error))
+            return None
 
-            # Validate email format
-            if field == "stu_emailadd":
-                if not any(value.endswith(domain) for domain in valid_email_domains):
-                    errors.append("Email must end with @email.com, @gmail.com, @yahoo.com, or @mail.com.")
-
-            # Validate sex field
-            if field == "stu_sex" and value not in ["Female", "Male"]:
-                errors.append("Sex must be either 'Female' or 'Male'.")
-
-        # Show error messages if there are any
-        if errors:
-            messagebox.showerror("Invalid Input", "\n".join(errors))
-            return None  # Validation failed
-        return True  # Validation passed
+        return True
 
     def save_changes(self, updated_data):
         self.main.admin_model.update_student_profile(
@@ -393,15 +517,17 @@ class ViewStudentProfile(tk.Toplevel):
 
         )
 
-    def on_close(self):
-        if self.is_edit_mode:
+    def close(self):
+        if self.is_update_mode:
             response = messagebox.askyesno("Unsaved Changes", "Do you want to save your changes before closing?")
             if response:
-                updated_data = self.get_entries_values()
-                if self.validate_update(self.entries):
+                updated_data = self.get_fields_values()
+                if self.validate_update(self.field_widgets):
                     self.save_changes(updated_data)
                     messagebox.showinfo("Saved", "Changes have been saved.")
                     self.destroy()
+                else:
+                    return
         self.destroy()
 
 

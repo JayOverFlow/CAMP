@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, font
-import re
+from tkinter import messagebox, font
 
 
 class AddFaculty(tk.Toplevel):
@@ -14,7 +13,7 @@ class AddFaculty(tk.Toplevel):
         self.resizable(False, False)
 
         # Main frame
-        self.main_frame = tk.Frame(self)
+        self.main_frame = tk.Frame(self, bg="#FFFFFF")
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
         self.fields_max_length = {
@@ -34,7 +33,7 @@ class AddFaculty(tk.Toplevel):
         entry_font = font.Font(family="Lexend Deca", size=8)
 
         # First Name
-        tk.Label(self.main_frame, text="First Name", font=lbl_font, fg="#020202").place(x=20, y=55)
+        tk.Label(self.main_frame, text="First Name", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=55)
         self.first_name = tk.Entry(
             self,
             width=28,
@@ -50,7 +49,7 @@ class AddFaculty(tk.Toplevel):
         self.first_name.place(x=22, y=78)
 
         # Middle name
-        tk.Label(self.main_frame, text="Middle Name", font=lbl_font, fg="#020202").place(x=20, y=108)
+        tk.Label(self.main_frame, text="Middle Name", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=108)
         self.middle_name = tk.Entry(
             self,
             width=28,
@@ -66,7 +65,7 @@ class AddFaculty(tk.Toplevel):
         self.middle_name.place(x=22, y=131)
 
         # Last name
-        tk.Label(self.main_frame, text="Last Name", font=lbl_font, fg="#020202").place(x=20, y=161)
+        tk.Label(self.main_frame, text="Last Name", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=161)
         self.last_name = tk.Entry(
             self,
             width=28,
@@ -82,7 +81,7 @@ class AddFaculty(tk.Toplevel):
         self.last_name.place(x=22, y=184)
 
         # Email
-        tk.Label(self.main_frame, text="Email", font=lbl_font, fg="#020202").place(x=20, y=214)
+        tk.Label(self.main_frame, text="Email", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=214)
         self.email = tk.Entry(
             self,
             width=28,
@@ -98,7 +97,7 @@ class AddFaculty(tk.Toplevel):
         self.email.place(x=22, y=237)
 
         # Phone Number
-        tk.Label(self.main_frame, text="Phone Number", font=lbl_font, fg="#020202").place(x=250, y=55)
+        tk.Label(self.main_frame, text="Phone Number", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=55)
         self.phone_num = tk.Entry(
             self,
             width=28,
@@ -114,7 +113,7 @@ class AddFaculty(tk.Toplevel):
         self.phone_num.place(x=252, y=78)
 
         # LRN
-        tk.Label(self.main_frame, text="Username", font=lbl_font, fg="#020202").place(x=250, y=108)
+        tk.Label(self.main_frame, text="Username", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=108)
         self.username = tk.Entry(
             self,
             width=28,
@@ -130,7 +129,7 @@ class AddFaculty(tk.Toplevel):
         self.username.place(x=252, y=131)
 
         # Password
-        tk.Label(self.main_frame, text="Password", font=lbl_font, fg="#020202").place(x=250, y=161)
+        tk.Label(self.main_frame, text="Password", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=161)
         self.password = tk.Entry(
             self,
             width=28,
@@ -146,7 +145,7 @@ class AddFaculty(tk.Toplevel):
         self.password.place(x=252, y=184)
 
         # Confirm password
-        tk.Label(self.main_frame, text="Confirm Password", font=lbl_font, fg="#020202").place(x=250, y=214)
+        tk.Label(self.main_frame, text="Confirm Password", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=214)
         self.confirm_password = tk.Entry(
             self,
             width=28,
