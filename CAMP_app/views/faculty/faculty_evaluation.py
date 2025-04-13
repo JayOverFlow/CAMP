@@ -1,8 +1,6 @@
-import ctypes
 import tkinter as tk
-from tkinter import ttk
 from pathlib import Path
-from tkinter import font, messagebox
+from tkinter import messagebox
 from PIL import Image, ImageTk, ImageDraw
 
 
@@ -23,25 +21,56 @@ class FacultyEvaluation(tk.Frame):
         # Header
         self.evaluation_canvas.create_text(20, 20, text="Evaluations", font=("Lexend Deca", 20, "bold"), fill="#8D0404", anchor=tk.NW)
 
-        self.create_evaluation_analytics()
-        self.display_evaluation_list()
-
-    def create_evaluation_analytics(self):
-        # Average eval rating
-        fac_id = self.faculty_landing.faculty_session["fac_id"]
-        avg_eval_rating = self.main.faculty_model.get_average_rating(fac_id)
-        self.evaluation_canvas.create_text(46, 100, text=avg_eval_rating, font=("Lexend Deca", 20, "bold"), fill="#020202",
-                                           anchor=tk.NW)
         # Star
         star_path = self.IMAGES_DIR / "Star.png"
         star = Image.open(star_path)
         # Big star
-        big_star = star.resize((30, 30), Image.Resampling.LANCZOS)
+        big_star = star.resize((26, 26), Image.Resampling.LANCZOS)
         self.big_star = ImageTk.PhotoImage(big_star)
         # Small start
         star = star.resize((12, 12), Image.Resampling.LANCZOS)
         self.star = ImageTk.PhotoImage(star)
-        self.evaluation_canvas.create_image(104, 106, image=self.big_star, anchor=tk.NW)
+
+        self.create_evaluation_analytics()
+        self.display_evaluation_list()
+
+    def create_evaluation_analytics(self):
+        if hasattr(self, 'overall_eval_frame'):
+            self.overall_eval_frame.destroy()
+
+        if hasattr(self, 'analytics_frame'):
+            self.analytics_frame.destroy()
+
+
+        # Average eval rating
+        fac_id = self.faculty_landing.faculty_session["fac_id"]
+        avg_eval_rating = self.main.faculty_model.get_average_rating(fac_id)
+        total_evaluations = self.main.faculty_model.get_total_evaluations(fac_id)
+
+        self.overall_eval_frame = tk.Frame(self, width=140, height=90, bd=0, relief="flat")
+        self.overall_eval_frame.place(x=20, y=60)
+        self.overall_eval_frame.pack_propagate(False)
+
+        self.overall_eval_canvas = tk.Canvas(self.overall_eval_frame, bg="#8D0404", bd=0, highlightthickness=0)
+        self.overall_eval_canvas.pack(fill="both", expand=True)
+
+        # Overall Label
+        self.overall_eval_canvas.create_text(40, 5, text="OVERALL",
+                                     font=("Lexend Deca", 10, "bold"),
+                                     fill="#FFFFFF", anchor=tk.NW)
+
+        # Evaluation Rating
+        self.overall_eval_canvas.create_text(30, 30, text=avg_eval_rating,
+                                             font=("Lexend Deca", 16, "bold"),
+                                             fill="#FFFFFF", anchor=tk.NW)
+
+        # Star
+        self.overall_eval_canvas.create_image(80, 30, image=self.big_star, anchor=tk.NW)
+
+        # Total eval
+        self.overall_eval_canvas.create_text(36, 70, text=f"{total_evaluations} EVALUATIONS",
+                                             font=("Lexend Deca", 6, "bold"),
+                                             fill="#FFFFFF", anchor=tk.NW)
 
         self.analytics_frame = tk.Frame(self, width=140, height=140, bg="#FFFFFF", bd=0, relief="flat")
         self.analytics_frame.place(x=20, y=150)
@@ -127,6 +156,11 @@ class FacultyEvaluation(tk.Frame):
                                              fill="#020202", anchor=tk.NW)
                 eval_card_canvas.create_image(564, 15, image=self.star, anchor=tk.NW)
 
+                # Date & Time
+                eval_card_canvas.create_text(490, 50, text=evaluation['eval_date'],
+                                             font=("Lexend Deca", 6),
+                                             fill="gray", anchor=tk.NW)
+
                 # Delete Button
                 delete_btn = tk.Button(eval_card, width=34, height=78, borderwidth=0,
                                        image=self.trash,
@@ -180,6 +214,7 @@ class FacultyEvaluation(tk.Frame):
         confirm = messagebox.askyesno("Confirm Delete", "Are you sure you want to delete this evaluation?")
         if confirm:
             result = self.main.faculty_model.delete_evaluation(eval_id)
+            self.create_evaluation_analytics()
             if result:
                 card_widget.destroy()
                 messagebox.showinfo("Deleted", "Evaluation deleted successfully.")

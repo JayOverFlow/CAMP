@@ -120,7 +120,8 @@ class AdminLanding(tk.Toplevel):
         self.logout_btn = tk.Button(self.sidebar, width=134, height=21, borderwidth=0, image=self.logout_img, command=self.log_out)
         self.logout_btn.place(x=2, y=550)
 
-        self.display_frame("AdminDashboard")
+        self.display_frame("AdminDashboard") # NOTE: Take this back
+        # self.display_frame("AdminCourses") # NOTE: Remove this
 
     def load_image(self, filename):
         path = self.IMAGES_DIR / filename

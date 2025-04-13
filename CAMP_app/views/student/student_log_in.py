@@ -18,7 +18,7 @@ class StudentLogIn(tk.Frame):
         IMAGES_DIR = BASE_DIR / "static/images"
 
         # Background
-        bg_path = IMAGES_DIR / "home_screen_bg.png"  # Get the path of a specific image
+        bg_path = IMAGES_DIR / "UserLoginBG.png"  # Get the path of a specific image
         bg = Image.open(bg_path)  # Load the img file
         bg = bg.resize((1000, 600), Image.Resampling.LANCZOS)  # Resize the img
         self.bg = ImageTk.PhotoImage(bg)  # Convert into Python Object

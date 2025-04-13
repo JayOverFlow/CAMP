@@ -87,63 +87,21 @@ class AdmitStudent(tk.Toplevel):
         )
         self.last_name.place(x=22, y=184)
 
-        # Sex
-        sex_lbl = tk.Label(self.main_frame, text="Sex", font=lbl_font, fg="#020202", bg="#FFFFFF")
-        sex_lbl.place(x=20, y=214)
-        sex_lbl.lower()
-        self.sex_var = tk.StringVar()
-        self.sex_var.set("Select \u25BE")
-        self.sex_dropdown = tk.OptionMenu(self.main_frame, self.sex_var, "Female", "Male")
-
-        # Dropdown design
-        self.sex_dropdown.config(
-            font=("Lexend Deca", 5, "bold"),
+        # Religion
+        tk.Label(self.main_frame, text="Religion", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=20, y=214)
+        self.religion = tk.Entry(
+            self,
+            width=28,
             bg="#FFFFFF",
             fg="#020202",
-            activebackground="#E0E0E0",
-            activeforeground="#020202",
             relief="flat",
             highlightthickness=1,
             highlightbackground="#020202",
-            bd=1,
-            padx=14,
-        )
-
-        menu = self.sex_dropdown["menu"]
-        menu.config(
+            highlightcolor="#8D0404",
+            insertbackground="#020202",
             font=entry_font,
-            bg="#FFFFFF",
-            fg="#020202",
-            activebackground="#8D0404",
-            activeforeground="#FFFFFF",
-            bd=0,
-            tearoff=0
         )
-        self.sex_dropdown.place(x=22, y=238)
-        self.sex_dropdown.lift()
-
-        # Birthdate
-        tk.Label(self.main_frame, text="Birthdate", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=120, y=214)
-
-        self.birthdate = DateEntry(
-            self.main_frame,
-            width=10,
-            background="#8D0404",
-            foreground="#FFFFFF",
-            borderwidth=0,
-            date_pattern="yyyy-mm-dd",
-            headersbackground="#8D0404",
-            headersforeground="#FFFFFF",
-            selectbackground="#8D0404",
-            selectforeground="#FFFFFF",
-            normalbackground="#FFFFFF",
-            normalforeground="#333333",
-            weekendbackground="#F5F5F5",
-            weekendforeground="#8D0404",
-            font=("Lexend Deca", 8),
-        )
-        self.birthdate.place(x=122, y=238)
-        self.birthdate.delete(0, tk.END)
+        self.religion.place(x=20, y=238)
 
         # Citizenship
         tk.Label(self.main_frame, text="Citizenship", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=250, y=55)
@@ -209,8 +167,65 @@ class AdmitStudent(tk.Toplevel):
         )
         self.email.place(x=252, y=237)
 
+        # Sex
+        sex_lbl = tk.Label(self.main_frame, text="Sex", font=lbl_font, fg="#020202", bg="#FFFFFF")
+        sex_lbl.place(x=480, y=55)
+        sex_lbl.lower()
+        self.sex_var = tk.StringVar()
+        self.sex_var.set("Select \u25BE")
+        self.sex_dropdown = tk.OptionMenu(self.main_frame, self.sex_var, "Female", "Male")
+
+        # Dropdown design
+        self.sex_dropdown.config(
+            font=("Lexend Deca", 5, "bold"),
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#E0E0E0",
+            activeforeground="#020202",
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground="#020202",
+            bd=1,
+            padx=72,
+        )
+
+        menu = self.sex_dropdown["menu"]
+        menu.config(
+            font=entry_font,
+            bg="#FFFFFF",
+            fg="#020202",
+            activebackground="#8D0404",
+            activeforeground="#FFFFFF",
+            bd=0,
+            tearoff=0
+        )
+        self.sex_dropdown.place(x=482, y=78)
+        self.sex_dropdown.lift()
+
+        # Birthdate
+        tk.Label(self.main_frame, text="Birthdate", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=710, y=55)
+        self.birthdate = DateEntry(
+            self.main_frame,
+            width=25,
+            background="#8D0404",
+            foreground="#FFFFFF",
+            borderwidth=0,
+            date_pattern="yyyy-mm-dd",
+            headersbackground="#8D0404",
+            headersforeground="#FFFFFF",
+            selectbackground="#8D0404",
+            selectforeground="#FFFFFF",
+            normalbackground="#FFFFFF",
+            normalforeground="#333333",
+            weekendbackground="#F5F5F5",
+            weekendforeground="#8D0404",
+            font=("Lexend Deca", 8),
+        )
+        self.birthdate.place(x=712, y=78)
+        self.birthdate.delete(0, tk.END)
+
         # Username
-        tk.Label(self.main_frame, text="Username", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=480, y=55)
+        tk.Label(self.main_frame, text="Username", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=480, y=108)
         self.username = tk.Entry(
             self,
             width=28,
@@ -223,26 +238,10 @@ class AdmitStudent(tk.Toplevel):
             insertbackground="#020202",
             font=entry_font,
         )
-        self.username.place(x=482, y=78)
-
-        # Religion
-        tk.Label(self.main_frame, text="Religion", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=710, y=55)
-        self.religion = tk.Entry(
-            self,
-            width=28,
-            bg="#FFFFFF",
-            fg="#020202",
-            relief="flat",
-            highlightthickness=1,
-            highlightbackground="#020202",
-            highlightcolor="#8D0404",
-            insertbackground="#020202",
-            font=entry_font,
-        )
-        self.religion.place(x=712, y=78)
+        self.username.place(x=482, y=131)
 
         # Password
-        tk.Label(self.main_frame, text="Password", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=480, y=108)
+        tk.Label(self.main_frame, text="Password", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=710, y=108)
         self.password = tk.Entry(
             self,
             width=28,
@@ -255,23 +254,7 @@ class AdmitStudent(tk.Toplevel):
             insertbackground="#020202",
             font=entry_font,
         )
-        self.password.place(x=482, y=131)
-
-        # Confirm Password
-        tk.Label(self.main_frame, text="Confirm Password", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=710, y=108)
-        self.confirm_password = tk.Entry(
-            self,
-            width=28,
-            bg="#FFFFFF",
-            fg="#020202",
-            relief="flat",
-            highlightthickness=1,
-            highlightbackground="#020202",
-            highlightcolor="#8D0404",
-            insertbackground="#020202",
-            font=entry_font,
-        )
-        self.confirm_password.place(x=712, y=131)
+        self.password.place(x=712, y=131)
 
         # Address
         tk.Label(self.main_frame, text="Address", font=lbl_font, fg="#020202", bg="#FFFFFF").place(x=480, y=161)
@@ -352,8 +335,7 @@ class AdmitStudent(tk.Toplevel):
             "Birthdate": self.birthdate.get().strip(),
             "Religion": self.religion.get().strip(),
             "Username": self.username.get().strip(),
-            "Password": self.password.get().strip(),
-            "Confirm Password": self.confirm_password.get().strip(),
+            "Password": self.password.get().strip()
         }
 
         # Check if all fields except Middle Name are empty
@@ -385,10 +367,7 @@ class AdmitStudent(tk.Toplevel):
             errors.append(f"Email must end with {', '.join(email_domains)}")
 
         password = data["Password"]
-        confirm_password = data["Confirm Password"]
-        if password != confirm_password:
-            errors.append("Passwords do not match.")
-        elif len(password) < 8:
+        if len(password) < 8:
             errors.append("Password must be at least 8 characters.")
 
         if data["Sex"] == "Select ▾":
@@ -448,7 +427,6 @@ class AdmitStudent(tk.Toplevel):
         self.religion.delete(0, tk.END)
         self.username.delete(0, tk.END)
         self.password.delete(0, tk.END)
-        self.confirm_password.delete(0, tk.END)
 
     def close(self):
         self.destroy()

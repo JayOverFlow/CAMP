@@ -78,7 +78,7 @@ class ViewFacultyStudents(tk.Toplevel):
 
         # Column widths (match fake header label widths)
         self.faculty_stu_list.column("count", anchor="center", width=50)
-        self.faculty_stu_list.column("stu_full_name", anchor="center", width=250)
+        self.faculty_stu_list.column("stu_full_name", anchor="w", width=250)
         self.faculty_stu_list.column("stu_id", anchor="center", width=128)
         self.faculty_stu_list.column("remove", anchor="center", width=110)
 
@@ -120,7 +120,7 @@ class ViewFacultyStudents(tk.Toplevel):
             i = 1
             for student in fac_students:
                 self.faculty_stu_list.insert("", "end",
-                                             values=(i, student["stu_full_name"], f"AU{student["stu_id"]}", "Remove"), tags="row")
+                                             values=(i, f"        {student["stu_full_name"]}", f"AU{student["stu_id"]}", "Remove"), tags="row")
                 i += 1
         else:
             if hasattr(self, 'fac_stu_header_frame'):

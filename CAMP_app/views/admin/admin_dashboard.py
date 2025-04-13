@@ -87,18 +87,18 @@ class AdminDashboard(tk.Frame):
         self.search_icon = ImageTk.PhotoImage(search_icon)
         self.dashboard_canvas.create_image(754, 250, image=self.search_icon, anchor=tk.NW)
 
-        self.search_entry.insert(0, "Search by Name or ID")  # Initial as placeholder
+        self.search_entry.insert(0, " Search by Name or ID")  # Initial as placeholder
         # Handle focus for placeholder
         self.search_entry.bind("<FocusIn>", self.toggle_placeholder)
         self.search_entry.bind("<FocusOut>", self.toggle_placeholder)
         self.search_entry.bind("<KeyRelease>", self.filter_students)  # Filter students for live searching
 
         # Student list
-        self.dashboard_canvas.create_text(30, 246, text="Student List", font=("Lexend Deca", 20, "bold"),
+        self.dashboard_canvas.create_text(30, 246, text="STUDENT LIST", font=("Lexend Deca", 20, "bold"),
                                           fill="#8D0404", anchor=tk.NW)
 
         header_font = font.Font(family="Lexend Deca", size=10, weight="bold")
-        row_font = font.Font(family="Lexend Deca", size=8)
+        row_font = font.Font(family="Lexend Deca", size=10)
 
         # Fake styled header (red background, white text)
         header_frame = tk.Frame(self, bg="#8D0404", width=756, height=30)
@@ -125,11 +125,15 @@ class AdminDashboard(tk.Frame):
         self.student_list.heading("view_profile", text="")
 
         # Define columns
-        self.student_list.column("stu_full_name", anchor="center", width=300)
+        self.student_list.column("stu_full_name", anchor="w", width=300)
         self.student_list.column("stu_id", anchor="center", width=204)
         self.student_list.column("view_profile", anchor="center", width=250)
 
-        self.student_list.tag_configure("row", font=row_font)
+        # self.student_list.tag_configure("font_row", font=row_font)
+
+        # Configure alternating row background colors
+        self.student_list.tag_configure("oddrow", background="#FFFFFF", font=row_font)
+        self.student_list.tag_configure("evenrow", background="#E2E1E1", font=row_font)
 
         self.student_list.place(x=30,y=300)
         header_frame.lift()
@@ -166,6 +170,8 @@ class AdminDashboard(tk.Frame):
 
         return faculty_count
     def admit_student(self):
+        # self.admin_landing.sidebar_canvas.create_rectangle(0, 0, 400, 300, fill="black", stipple="gray50", outline="")
+        # canvas.create_rectangle(0, 0, 400, 300, fill="black", stipple="gray50", outline="")
         self.admin_landing.attributes("-disabled", True) # Disable the interaction
         self.admin_landing.wait_window(AdmitStudent(self.main, self)) # Wait for the popup
         self.admin_landing.attributes("-disabled", False) # Re-enable the interaction
@@ -182,8 +188,17 @@ class AdminDashboard(tk.Frame):
     def update_treeview(self, students):
         # Clear and display
         self.student_list.delete(*self.student_list.get_children())
-        for student in students:
-            self.student_list.insert("", "end", values=(student["stu_full_name"], f"AU{student["stu_id"]}", "View Profile"), tags=("row",))
+        # for student in students:
+        #     self.student_list.insert("", "end", values=(f"    {student["stu_full_name"]}", f"AU{student["stu_id"]}", "View Profile"), tags=("font_row",))
+
+        for index, student in enumerate(students):
+            tag = "evenrow" if index % 2 == 0 else "oddrow"
+            self.student_list.insert(
+                "",
+                "end",
+                values=(f"    {student['stu_full_name']}", f"AU{student['stu_id']}", "View Profile"),
+                tags=(tag,)
+            )
 
     def filter_students(self, event=None):
         search_text = self.search_var.get().lower() # Get the user input
@@ -196,12 +211,12 @@ class AdminDashboard(tk.Frame):
 
     def toggle_placeholder(self, event):
         if event.type == "9":  # FocusIn
-            if self.search_entry.get() == "Search by Name or ID":
+            if self.search_entry.get() == " Search by Name or ID":
                 self.search_entry.delete(0, tk.END)
-                self.search_entry.config(fg="black")
+                self.search_entry.config(fg="gray")
         elif event.type == "10":  # FocusOut
             if not self.search_entry.get():
-                self.search_entry.insert(0, "Search by Name or ID")
+                self.search_entry.insert(0, " Search by Name or ID")
                 self.search_entry.config(fg="gray")
 
     def view_profile(self, event):
