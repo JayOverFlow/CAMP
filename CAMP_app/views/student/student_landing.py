@@ -31,6 +31,9 @@ class StudentLanding(tk.Toplevel):
         # Images directory
         self.IMAGES_DIR = BASE_DIR / "static/images"
 
+        icon_path = self.IMAGES_DIR / "CAMPLogoWhiteIcon.ico"
+        self.iconbitmap(default=icon_path)
+
         FONTS_DIR = BASE_DIR / "static/fonts"
         FONT_PATH = FONTS_DIR / "LexendDeca-Bold.ttf"
 
@@ -48,6 +51,12 @@ class StudentLanding(tk.Toplevel):
             frame = CF(self.main_frame, self.main, self)
             self.dict_frames[CF.__name__] = frame
             frame.grid(row=0, column=1, sticky=tk.NSEW)
+
+            # 👇 Assign references for later use
+            if CF.__name__ == "StudentCoursesTab":
+                self.courses_tab = frame
+            elif CF.__name__ == "StudentScheduleTab":
+                self.schedule_tab = frame
 
         # Sidebar Frame
         self.sidebar = tk.Frame(self.main_frame, width=150, height=1000)
@@ -71,8 +80,8 @@ class StudentLanding(tk.Toplevel):
         icon_student = icon_student.resize((50, 50), Image.Resampling.LANCZOS)
         self.icon_student = ImageTk.PhotoImage(icon_student)
         self.sidebar_canvas.create_image(45, 90, image=self.icon_student, anchor=tk.NW)
-        self.sidebar_canvas.create_text(25, 145, text=self.student_session["stu_full_name"], font=("Lexend Deca",10),
-                                        fill="#FFFFFF", anchor=tk.NW)
+        self.sidebar_canvas.create_text(80, 150, text=self.student_session["stu_full_name"], font=("Lexend Deca",8),
+                                        fill="#FFFFFF", anchor="center")
         self.sidebar_canvas.create_text(55, 159, text="Student", font=("Lexend Deca",6) , fill="#FFFFFF", anchor=tk.NW)
 
         self.button_images = {

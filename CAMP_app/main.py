@@ -1,4 +1,7 @@
 import tkinter as tk
+from pathlib import Path
+import os
+
 
 # Import different frames to display
 from CAMP_app.views.home_screen import HomeScreen
@@ -24,6 +27,14 @@ class Main(tk.Tk):
         self.title("CAMP")
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
+        self.config(bd=0, highlightthickness=0)
+
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+        # Images directory
+        self.IMAGES_DIR = BASE_DIR / "static/images"
+        icon_path = os.path.join(os.path.dirname(__file__), "static", "images", "CAMPLogoWhiteIcon.ico")
+        self.iconbitmap(icon_path)
 
         # For users authentication
         from CAMP_app.controllers.user_auth import UserAuth
