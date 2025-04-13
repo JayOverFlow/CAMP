@@ -21,8 +21,9 @@ class ViewStudentProfile(tk.Toplevel):
 
         # Paths
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
         IMAGES_DIR = BASE_DIR / "static/images"
-        self.PFP_DIR = BASE_DIR / "static/student_pfps"
+        self.PFP_DIR = ROOT_DIR / "shared_assets/profile_pictures"
 
         # Main Frame
         self.main_frame = tk.Frame(self, bg="#FFFFFF")

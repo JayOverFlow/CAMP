@@ -18,6 +18,7 @@ class StudentProfileTab(tk.Frame,):
         self.config(bd=0, highlightthickness=0)
 
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
         # Images directory
         self.IMAGES_DIR = BASE_DIR / "static/images"
@@ -38,7 +39,7 @@ class StudentProfileTab(tk.Frame,):
             ("Religion", "stu_religion"),
         ]
         # Student pfp directory
-        PFP_DIR = BASE_DIR / "static/student_pfps"
+        PFP_DIR = ROOT_DIR / "shared_assets/profile_pictures"
 
         FONT_DIR = BASE_DIR / "static/fonts"
 
