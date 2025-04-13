@@ -14,6 +14,7 @@ class FacultyStudents(tk.Frame):
 
         # Paths
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
+        ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
         self.IMAGES_DIR = BASE_DIR / "static/images"
         self.PFP_DIR = BASE_DIR / "static/student_pfps"
 
