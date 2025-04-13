@@ -19,7 +19,7 @@ class AdminLogIn(tk.Frame):
         # Background
         bg_path = IMAGES_DIR / "home_screen_bg.png"  # Get the path of a specific image
         bg = Image.open(bg_path)  # Load the img file
-        bg = bg.resize((1000, 600), Image.Resampling.LANCZOS)  # Resize the img
+        bg = bg.resize((1050, 650), Image.Resampling.LANCZOS)  # Resize the img
         self.bg = ImageTk.PhotoImage(bg)  # Convert into Python Object
         self.canvas.create_image(0, 0, anchor=tk.NW, image=self.bg)  # Put the widget
 

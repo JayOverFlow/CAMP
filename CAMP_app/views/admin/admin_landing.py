@@ -22,6 +22,8 @@ class AdminLanding(tk.Toplevel):
         # Paths
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
         self.IMAGES_DIR = BASE_DIR / "static/images"
+        icon_path = self.IMAGES_DIR / "CAMPLogoWhiteIcon.ico"
+        self.iconbitmap(default=icon_path)
 
         # Main Frame
         self.main_frame = tk.Frame(self)

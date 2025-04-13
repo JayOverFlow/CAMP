@@ -14,11 +14,12 @@ class StudentCoursesTab(tk.Frame):
         self.main = main
         self.student_landing = student_landing
         self.student_session = student_landing.student_session
+        self.config(bd=0, highlightthickness=0)
 
         self.style = ttk.Style()
         self.style.configure("Custom.TLabel", font=("Lexend Deca", 20, "bold"), foreground="#8D0404")
 
-        self.lbl = ttk.Label(self, text="Courses", style="Custom.TLabel")
+        self.lbl = ttk.Label(self, text="COURSES", style="Custom.TLabel")
         self.lbl.grid(row=0, column=0, columnspan=3, pady=10,padx=10)
 
         style = ttk.Style()
@@ -50,9 +51,9 @@ class StudentCoursesTab(tk.Frame):
 
         self.display_enrolled_courses(self.student_session["stu_id"])
 
-        self.apply_btn = ctk.CTkButton(self, text="+ Apply for Course", corner_radius=7, fg_color="#8D0404",font=("Lexend Deca", 13,),
+        self.apply_btn = ctk.CTkButton(self, text="+ Enlist Course", corner_radius=7, fg_color="#8D0404",font=("Lexend Deca", 13,),
                                        text_color="white", command=self.open_course_application)
-        self.apply_btn.place(x=659, y=17)
+        self.apply_btn.place(x=659, y=459)
 
     def display_enrolled_courses(self, stu_id):
         enrolled_courses = self.main.student_model.get_courses(stu_id)
@@ -63,7 +64,12 @@ class StudentCoursesTab(tk.Frame):
         row_height = 30
         self.evaluate_buttons = []
 
+        # Configure row tags for styling
+        self.course_list.tag_configure('even', background='#f0f0f0')  # light gray
+        self.course_list.tag_configure('odd', background='#ffffff')  # white
+
         for index, course in enumerate(enrolled_courses):
+            tag = 'even' if index % 2 == 0 else 'odd'
             item_id = self.course_list.insert(
                 "", "end",
                 values=(
@@ -72,7 +78,8 @@ class StudentCoursesTab(tk.Frame):
                     course["final_grade"],
                     course["assigned_professor"],
                     ""
-                )
+                ),
+                tags=(tag,)
             )
 
             is_disabled = course.get("is_evaluated", False)
@@ -137,17 +144,21 @@ class StudentCoursesTab(tk.Frame):
             return "break"
 
     def refresh_courses(self):
-        # Clear treeview
+        # Refresh course list
         for item in self.course_list.get_children():
             self.course_list.delete(item)
 
-        # Remove existing buttons
         for btn in self.evaluate_buttons:
             btn.destroy()
         self.evaluate_buttons.clear()
 
-        # Reload
         self.display_enrolled_courses(self.student_session["stu_id"])
+
+        # ✅ Refresh schedule tab as well
+        if hasattr(self.student_landing, "schedule_tab"):
+            self.student_landing.schedule_tab.display_schedule(self.student_session["stu_id"])
+
+
 
 
 

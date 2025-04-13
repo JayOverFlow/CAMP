@@ -20,6 +20,8 @@ class FacultyEvalView(tk.Toplevel):
         self.geometry("400x355")
         self.title("Faculty Eval")
         self.resizable(False, False)
+        self.config(bd=0, highlightthickness=0)
+
         # Make this window modal
         self.grab_set()  # Prevents interaction with other windows
         self.transient(parent)  # Associates this window with the parent
@@ -29,7 +31,7 @@ class FacultyEvalView(tk.Toplevel):
         self.faculty_name_label = ctk.CTkLabel(self, text=self.faculty_name_text,
                                                font=("Lexend Deca", 20, "bold"),
                                                text_color="#8D0404")
-        self.faculty_name_label.pack(pady=5,padx=10)
+        self.faculty_name_label.pack(pady=3,padx=5)
 
         self.course_name_label = ctk.CTkLabel(self, text=self.course_name_text,
                                               font=("Lexend Deca", 14, "normal"),
@@ -132,12 +134,12 @@ class FacultyEvalView(tk.Toplevel):
         insert_eval = self.main.student_model.add_eval(student_id, faculty_id, eval_rating, eval_comment)
 
         if insert_eval:
-            messagebox.showinfo("Success", "Evaluation added successfully.")
+            messagebox.showinfo("Success", f"Successfully evaluated {self.faculty_name_text}")
             if self.on_submit:
                 self.on_submit()
             self.destroy()
         else:
-            messagebox.showerror("Error", "Course already evaluated")
+            messagebox.showerror("Error", f"{self.faculty_name_text} already evaluated")
             self.destroy()
 
     def clear_placeholder(self, event):

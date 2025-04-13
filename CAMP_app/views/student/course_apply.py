@@ -1,6 +1,6 @@
 import tkinter as tk
 import customtkinter as ctk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from customtkinter import *
 
 class CourseApplication(tk.Toplevel):
@@ -15,6 +15,7 @@ class CourseApplication(tk.Toplevel):
         self.title("Course Application")
         self.geometry("1000x600+120+20")
         self.resizable(False, False)
+        self.config(bd=0, highlightthickness=0)
 
         # Make this window modal
         self.grab_set()  # Prevents interaction with other windows
@@ -156,20 +157,34 @@ class CourseApplication(tk.Toplevel):
     def confirm_application(self):
         student_id = self.stu_id
 
+        # Get how many courses the student already has
+        existing_courses = self.main.student_model.get_courses(student_id)
+        total_existing = len(existing_courses) if existing_courses else 0
+        total_selected = len(self.selected_courses_list)
+
+        if total_existing + total_selected > 8:
+            tk.messagebox.showwarning(
+                "Course Limit Reached",
+                f"You can only apply for 8 courses total.\n"
+                f"You currently have {total_existing}.\n"
+                f"You selected {total_selected}.\n"
+                f"Please remove some courses before confirming."
+            )
+            return
+
+        # Proceed with application
         for course_name, (professor, course_id) in self.selected_courses_list.items():
             print(f"Applying for {course_name} with ID {course_id}...")
-
             result = self.main.student_model.apply_for_course(student_id, course_id)
 
-            # Check the result of the application process
             if result:
-                self.destroy()
-                if self.on_submit:
-                    self.on_submit()
-                print(f"Successfully applied for course: {course_name}")
+                messagebox.showinfo("Success", f"Successfully applied for course: {course_name}")
             else:
-                self.destroy()
-                print(f"Failed to apply for course: {course_name}")
+                messagebox.showinfo("Failed", f"Failed to apply for course: {course_name}")
+
+        self.destroy()
+        if self.on_submit:
+            self.on_submit()
 
     def on_tree_click(self, event):
         region = self.selected_list.identify("region", event.x, event.y)

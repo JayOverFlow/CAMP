@@ -57,13 +57,13 @@ class StudentProfileTab(tk.Frame,):
         # CAMP Logo
         red_bar_path = self.IMAGES_DIR / "HorizontalRedBar.png"
         red_bar = Image.open(red_bar_path)
-        red_bar = red_bar.resize((1000, 118), Image.Resampling.LANCZOS)
+        red_bar = red_bar.resize((1000, 120), Image.Resampling.LANCZOS)
         self.red_bar = ImageTk.PhotoImage(red_bar)
 
 
         # Red bar at the center top of the window
         self.red_bar_label = tk.Label(self, image=self.red_bar, bg="white")
-        self.red_bar_label.pack(side=tk.TOP,pady=0)
+        self.red_bar_label.place(x=0, y=0,width=1000, height=120)
 
         # Student pfp
         pfp_path = self.get_pfp_path(PFP_DIR, self.student_session["stu_id"])  # Get student pfp
@@ -77,7 +77,7 @@ class StudentProfileTab(tk.Frame,):
         upload_image = self.load_image("UploadButton.png",size=(20,30))
         self.upload_button = ctk.CTkButton(
             self, text="", image=upload_image,
-            width=0, height=0, border_width=0, corner_radius=0,
+            width=10, height=0, border_width=0, corner_radius=0,
             fg_color="#8D0404",
             hover=False,
             command=lambda: self.upload_pfp(PFP_DIR)
@@ -95,18 +95,45 @@ class StudentProfileTab(tk.Frame,):
         ctk.CTkLabel(self, text="My Information", font=("Lexend Deca", 18, "bold"), text_color="#8D0404").place(x=45, y=200)
 
         for i, (label_text, key) in enumerate(self.fields):
-            x_offset, y_offset = (50, 250 + (i % 7) * 40) if i < 7 else (400, 250 + ((i - 7) % 7) * 40)
+            if i < 7:
+                x_offset = 50
+                label_x_gap = 150
+            else:
+                x_offset = 420 + 10  # ⬅️ Add 10 pixels to the right column
+                label_x_gap = 130  # ⬅️ Slightly tighter gap between label and value
+
+            y_offset = 250 + (i % 7) * 40
+
             ttk.Label(self, text=f"{label_text}:", font=("Lexend Deca", 12, "bold"), foreground="#9AA6B2").place(
-                x=x_offset, y=y_offset)
+                x=x_offset, y=y_offset
+            )
+
             value = self.student_session.get(key, 'N/A')
             self.widgets[key] = ttk.Label(self, text=value, font=("Lexend Deca", 12), foreground="#8D0404")
-            self.widgets[key].place(x=x_offset + 150, y=y_offset)
+            self.widgets[key].place(x=x_offset + label_x_gap, y=y_offset)
 
     def toggle_edit_mode(self):
         if not self.edit_mode:
             self.enable_edit_mode()
         else:
-            messagebox.showinfo("Saved Changes", "The Changes were saved successfully")
+            updated_data = {
+                key: (
+                    widget.get() if isinstance(widget, (tk.Entry, ttk.Combobox)) else self.student_session.get(key, ''))
+                for key, widget in self.widgets.items()
+            }
+
+            # Check if data has changed
+            changes_made = any(
+                str(updated_data[key]).strip() != str(self.student_session.get(key, '')).strip()
+                for key in updated_data
+            )
+
+            if not changes_made:
+                messagebox.showinfo("No Changes", "No changes were made.")
+                self.disable_edit_mode()
+                return
+
+            messagebox.showinfo("Saved Changes", "The changes were saved successfully.")
             self.save_updates()
 
     def enable_edit_mode(self):
@@ -115,26 +142,35 @@ class StudentProfileTab(tk.Frame,):
         self.widgets.clear()
 
         for i, (label_text, key) in enumerate(self.fields):
-            x_offset, y_offset = (50, 250 + (i % 7) * 40) if i < 7 else (400, 250 + ((i - 7) % 7) * 40)
+            if i < 7:
+                x_offset = 50
+                label_x_gap = 150
+            else:
+                x_offset = 420 + 10
+                label_x_gap = 130
+
+            y_offset = 250 + (i % 7) * 40
+
             ttk.Label(self, text=f"{label_text}:", font=("Lexend Deca", 12, "bold"), foreground="#9AA6B2").place(
-                x=x_offset, y=y_offset)
+                x=x_offset, y=y_offset
+            )
 
             if key == "stu_sex":
                 gender_options = ["Male", "Female"]
                 combobox = ttk.Combobox(self, values=gender_options, state="readonly")
                 combobox.set(self.student_session.get(key, "Male"))
-                combobox.place(x=x_offset + 150, y=y_offset)
+                combobox.place(x=x_offset + label_x_gap, y=y_offset)
                 self.widgets[key] = combobox
             elif key in ["stu_first_name", "stu_middle_name", "stu_last_name"]:
                 entry = tk.Entry(self)
                 entry.insert(0, self.student_session.get(key, ''))
-                entry.place(x=x_offset + 150, y=y_offset)
+                entry.place(x=x_offset + label_x_gap, y=y_offset)
                 self.widgets[key] = entry
-                entry.bind("<KeyRelease>", self.update_full_name)  # Bind the event to update full name
+                entry.bind("<KeyRelease>", self.update_full_name)
             else:
                 entry = tk.Entry(self)
                 entry.insert(0, self.student_session.get(key, ''))
-                entry.place(x=x_offset + 150, y=y_offset)
+                entry.place(x=x_offset + label_x_gap, y=y_offset)
                 self.widgets[key] = entry
 
         self.update_profile_btn.configure(text="Save")
@@ -281,7 +317,14 @@ class StudentProfileTab(tk.Frame,):
         full_name = f"{first_name} {middle_name} {last_name}".strip()
         self.full_name.config(text=full_name)
 
+    def disable_edit_mode(self):
+        for widget in self.widgets.values():
+            widget.destroy()
+        self.widgets.clear()
 
+        self.create_profile_view()
+        self.update_profile_btn.configure(text="UPDATE PROFILE")
+        self.edit_mode = False
 
 
 
