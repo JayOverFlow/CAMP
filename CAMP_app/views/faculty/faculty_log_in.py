@@ -16,7 +16,7 @@ class FacultyLogIn(tk.Frame):
         IMAGES_DIR = BASE_DIR / "static/images"
 
         # Background
-        bg_path = IMAGES_DIR / "home_screen_bg.png"  # Get the path of a specific image
+        bg_path = IMAGES_DIR / "UserLoginBG.png"  # Get the path of a specific image
         bg = Image.open(bg_path)  # Load the img file
         bg = bg.resize((1050, 650), Image.Resampling.LANCZOS)  # Resize the img
         self.bg = ImageTk.PhotoImage(bg)  # Convert into Python Object
@@ -80,7 +80,7 @@ class FacultyLogIn(tk.Frame):
         self.back_btn = ttk.Button(self, text="◀", command=self.back, style='btnStyle.TButton')
         self.back_btn.place(anchor=tk.NW, x=900, y=30, width=50, height=50)
 
-        # self.short_cut() # NOTE: Remove this
+        self.short_cut() # NOTE: Remove this
 
 
     def log_in(self, event=None):

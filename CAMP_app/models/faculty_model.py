@@ -336,3 +336,27 @@ class FacultyModel:
                 return None
             finally:
                 conn.close()
+
+    def get_total_evaluations(self, fac_id):
+        conn = self.db.get_connection()
+
+        if not conn:
+            return None
+
+        try:
+            cursor = conn.cursor(dictionary=True)
+            query = "SELECT COUNT(*) FROM evaluation_tbl WHERE fac_id_fk = %s"
+            cursor.execute(query, (fac_id,))
+            count = cursor.fetchone()
+            if count:
+                return count["COUNT(*)"]
+            else:
+                return 0
+            cursor.close()
+            return ratings
+
+        except mysql.connector.Error as error:
+            print(error)
+            return None
+        finally:
+            conn.close()

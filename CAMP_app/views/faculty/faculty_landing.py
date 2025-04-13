@@ -99,7 +99,8 @@ class FacultyLanding(tk.Toplevel):
                                     command=self.log_out)
         self.logout_btn.place(x=2, y=550)
 
-        self.display_frame("FacultyStudents")
+        # self.display_frame("FacultyStudents") # NOTE:Take this back
+        self.display_frame("FacultyEvaluation") # NOTE: Remove this
 
     def load_image(self, filename):
         path = self.IMAGES_DIR / filename

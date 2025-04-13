@@ -92,7 +92,7 @@ class AdminModel:
 
         try:
             cursor = conn.cursor(dictionary=True)
-            query = "SELECT stu_full_name, stu_id FROM student_tbl ORDER BY stu_id ASC"
+            query = "SELECT stu_full_name, stu_id FROM student_tbl ORDER BY stu_full_name ASC"
             cursor.execute(query)
             result = cursor.fetchall()
             cursor.close()
@@ -422,34 +422,6 @@ class AdminModel:
             print(f"Error fetching course ID: {error}")
             return None
         finally:
-            conn.close()
-
-    def remove_course(self, cou_id):
-        conn = self.db.get_connection()
-
-        if not conn:
-            return None
-
-        try:
-            cursor = conn.cursor()
-            query = "DELETE FROM course_tbl WHERE cou_id = %s"
-            cursor.execute(query, (cou_id,))
-
-            if cursor.rowcount > 0:
-                conn.commit()
-                print("Course removed successfully.")
-                return True
-            else:
-                print("No course found with the given ID.")
-                conn.rollback()
-                return False
-
-        except mysql.connector.Error as error:
-            print(f"Error removing course: {error}")
-            return None
-
-        finally:
-            cursor.close()
             conn.close()
 
     def get_schedule_days(self):

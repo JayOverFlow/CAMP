@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, font
-import re
+from tkinter import messagebox, font
 
 
 class AddCourse(tk.Toplevel):

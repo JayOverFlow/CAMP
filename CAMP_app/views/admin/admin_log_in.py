@@ -17,7 +17,7 @@ class AdminLogIn(tk.Frame):
         IMAGES_DIR = BASE_DIR / "static/images"
 
         # Background
-        bg_path = IMAGES_DIR / "home_screen_bg.png"  # Get the path of a specific image
+        bg_path = IMAGES_DIR / "UserLoginBG.png"  # Get the path of a specific image
         bg = Image.open(bg_path)  # Load the img file
         bg = bg.resize((1050, 650), Image.Resampling.LANCZOS)  # Resize the img
         self.bg = ImageTk.PhotoImage(bg)  # Convert into Python Object
@@ -127,6 +127,6 @@ class AdminLogIn(tk.Frame):
         self.admin_password_entry.delete(0, tk.END)
 
     def short_cut(self): # NOTE: Remove this
-        self.admin_username_entry.insert("", "adminjay")
-        self.admin_password_entry.insert("", "adminjay")
+        self.admin_username_entry.insert("", "emmantest")
+        self.admin_password_entry.insert("", "emman123")
         self.log_in()

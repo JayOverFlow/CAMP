@@ -16,7 +16,7 @@ class AdminFaculty(tk.Frame):
         self.faculty_canvas.pack(fill=tk.BOTH, expand=True)
 
         # Header
-        self.faculty_canvas.create_text(30, 20, text="Faculty", font=("Lexend Deca", 20, "bold"), fill="#8D0404",
+        self.faculty_canvas.create_text(30, 20, text="FACULTY MEMBERS", font=("Lexend Deca", 20, "bold"), fill="#8D0404",
                                          anchor=tk.NW)
 
         header_font = font.Font(family="Lexend Deca", size=10, weight="bold")
@@ -43,12 +43,16 @@ class AdminFaculty(tk.Frame):
         col_width_view = 198
 
         # Columns
-        self.faculty_list.column("fac_full_name", anchor="center", width=col_width_name)
+        self.faculty_list.column("fac_full_name", anchor="w", width=col_width_name)
         self.faculty_list.column("fac_id", anchor="center", width=col_width_id)
-        self.faculty_list.column("course", anchor="center", width=col_width_course)
+        self.faculty_list.column("course", anchor="w", width=col_width_course)
         self.faculty_list.column("view_student", anchor="center", width=col_width_view)
 
-        self.faculty_list.tag_configure("row", font=row_font)
+        # self.faculty_list.tag_configure("row", font=row_font)
+
+        # Configure alternating row background colors
+        self.faculty_list.tag_configure("oddrow", background="#FFFFFF", font=row_font)
+        self.faculty_list.tag_configure("evenrow", background="#E2E1E1", font=row_font)
 
         # Fake Header
         faculty_header_height = 30
@@ -105,8 +109,23 @@ class AdminFaculty(tk.Frame):
 
     def display_faculties(self):
         faculties = self.main.admin_model.get_faculties()
-        for faculty in faculties:
-            self.faculty_list.insert("", "end", values=(faculty["fac_full_name"], faculty["fac_id"], faculty["course_name"], "View Students"), tags=("row",))
+        # for faculty in faculties:
+        #     self.faculty_list.insert("", "end", values=(f"    {faculty["fac_full_name"]}",
+        #                                                 f"AU{faculty["fac_id"]}",
+        #                                                 faculty["course_name"],
+        #                                                 "View Students"), tags=("row",))
+
+        for index, faculty in enumerate(faculties):
+            tag = "evenrow" if index % 2 == 0 else "oddrow"
+            self.faculty_list.insert(
+                "",
+                "end",
+                values=(f"    {faculty["fac_full_name"]}",
+                        f"AU{faculty["fac_id"]}",
+                        faculty["course_name"],
+                        "View Students"),
+                tags=(tag,)
+            )
 
     def view_student(self, event):
         selected_row = self.faculty_list.identify_row(event.y)
@@ -119,9 +138,9 @@ class AdminFaculty(tk.Frame):
             print(values)
 
             if values:
-                fac_full_name = values[0]
+                fac_full_name = values[0][4:]
                 fac_assigned_course = values[2]
-                fac_id = values[1]
+                fac_id = values[1][2:]
                 fac_students = self.main.admin_model.get_faculty_students(fac_id)
 
                 self.admin_landing.attributes("-disabled", True)
